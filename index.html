@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mohamad AlAbbas | Planetary Health &amp; Environmental Demographer</title>
+  <meta name="description" content="PhD Candidate in Demography & Sociology at the University of Pennsylvania. Research in planetary health, environmental demography, and spatial analytics.">
+  <meta name="author" content="Mohamad AlAbbas">
+
+  <!-- Open Graph -->
+  <meta property="og:title"       content="Mohamad AlAbbas | Planetary Health &amp; Environmental Demographer">
+  <meta property="og:description" content="PhD Candidate in Demography & Sociology at UPenn. Planetary health, environmental demography, spatial analytics.">,
+  <meta property="og:type"        content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════╗
+     ║  NAVIGATION                      ║
+     ╚══════════════════════════════════╝ -->
+<nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+  <div class="container nav__inner">
+    <a href="index.html" class="nav__brand" aria-label="Home">MA</a>
+
+    <button class="nav__toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav__menu" id="navMenu" role="list">
+      <li><a href="#about"        class="nav__link">About</a></li>
+      <li><a href="#research"     class="nav__link">Research</a></li>
+      <li><a href="#skills"       class="nav__link">Skills</a></li>
+      <li><a href="#experience"   class="nav__link">Experience</a></li>
+      <li><a href="#projects"     class="nav__link">Projects</a></li>
+      <li><a href="#teaching"     class="nav__link">Teaching</a></li>
+      <li><a href="articles.html" class="nav__link">Articles</a></li>
+      <li><a href="#contact"      class="nav__link">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<!-- ╔══════════════════════════════════╗
+     ║  HERO                            ║
+     ╚══════════════════════════════════╝ -->
+<section class="hero" id="home" aria-label="Introduction">
+  <div class="container hero__content">
+    <span class="hero__eyebrow">Planetary Health · Environmental Demography · Spatial Analytics</span>
+
+    <h1 class="hero__name">Mohamad<br>AlAbbas</h1>
+
+    <p class="hero__role">
+      PhD Candidate in Demography &amp; Sociology<br>
+      <span class="hero__university">University of Pennsylvania · Benjamin Franklin Fellow</span>
+    </p>
+
+    <p class="hero__tagline">
+      Linking environmental shocks to population outcomes: causally rigorous, spatially grounded, policy-relevant.
+    </p>
+
+    <div class="hero__cta">
+      <a href="#projects"     class="btn btn-primary">Explore Research</a>
+      <a href="articles.html" class="btn btn-outline">Articles &amp; Code</a>
+      <!-- Update href below to point to your actual CV PDF once placed in this folder -->
+      <a href="CV_Mohammad_AlAbbas.pdf" class="btn btn-ghost" target="_blank" rel="noopener">Download CV ↗</a>
+    </div>
+
+    <div class="hero__social" aria-label="Social links">
+      <!-- Email -->
+      <a href="mailto:ma96@upenn.edu" class="social-icon" title="Email">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+      </a>
+      <!-- GitHub -->
+      <a href="https://github.com/MohamadAlAbbas-PhD" class="social-icon" title="GitHub" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      </a>
+      <!-- LinkedIn -->
+      <a href="https://www.linkedin.com/in/mohammadalabbas96" class="social-icon" title="LinkedIn" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <!-- Google Scholar -->
+      <a href="https://scholar.google.com/citations?user=hpTT5-4AAAAJ&hl=en&oi=ao" class="social-icon" title="Google Scholar" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 9a8 8 0 0 1 7.162 4.44L24 9.5z"/></svg>
+      </a>
+      <!-- ORCID -->
+      <a href="https://orcid.org/0000-0002-2084-8856" class="social-icon" title="ORCID" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.016-5.325 5.016h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <a href="#about" class="hero__scroll" aria-label="Scroll to About">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </a>
+</section>
+
+
+<!-- ╔══════════════════════════════════╗
+     ║  NEWS / UPDATES                  ║
+     ╚══════════════════════════════════╝ -->
+<!--
+  HOW TO UPDATE THIS SECTION
+  ──────────────────────────
+  Add a new <div class="news-item"> at the top of the list and delete the oldest one
+  to keep it at 3–4 items. Format: date · description · optional link.
+-->
+<div class="news-strip" id="updates">
+  <div class="container news-strip__inner">
+    <span class="news-strip__label">Updates</span>
+    <div class="news-strip__feed">
+
+      <div class="news-item">
+        <span class="news-date">Mar 2026</span>
+        <span class="news-text">
+          "Disparate Social Impacts by Satellite and Self-Report" submitted to
+          <em>Population &amp; Environment</em>
+        </span>
+      </div>
+
+      <div class="news-item">
+        <span class="news-date">Sep 2025</span>
+        <span class="news-text">
+          Received the <strong>Benjamin Franklin Fellowship</strong> renewal for 2025–2026 at the University of Pennsylvania
+        </span>
+      </div>
+
+      <div class="news-item">
+        <span class="news-date">Aug 2025</span>
+        <span class="news-text">
+          New working paper in progress: <em>CRAM</em> — a Climate-Resilient Access Metric for healthcare isolation in flood-prone regions
+        </span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ╔══════════════════════════════════╗
+     ║  ABOUT                           ║
+     ╚══════════════════════════════════╝ -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="about__grid">
+
+      <!-- Sidebar -->
+      <aside class="about__sidebar">
+        <div class="about__photo-wrap">
+          <!-- Replace the initials div below with an <img> tag once you have a photo:
+               <img src="img/photo.jpg" alt="Mohamad AlAbbas"> -->
+          <div class="about__photo" aria-hidden="true">MA</div>
+        </div>
+
+        <div class="about__meta">
+          <div class="meta-item">
+            <span class="meta-label">Institution</span>
+            <span class="meta-value">University of Pennsylvania</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Programs</span>
+            <span class="meta-value">PhD Demography &amp; Sociology · MA Demography · MA Statistics &amp; Data Science · MA Urban Spatial Analytics</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Expected Graduation</span>
+            <span class="meta-value">May 2028</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Fellowship</span>
+            <span class="meta-value">Benjamin Franklin Fellow (2024–2028)</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">ORCID</span>
+            <span class="meta-value">0000-0002-2084-8856</span>
+          </div>
+        </div>
+
+        <div class="about__awards-box">
+          <h3>Fellowships &amp; Awards</h3>
+          <ul>
+            <li>Benjamin Franklin Fellowship, UPenn (2024–2028)</li>
+            <li>Dean's Fellowship, UPenn (2023–2024)</li>
+            <li>MEPI Tomorrow's Leaders Graduate Fellowship, LAU (2021–2023)</li>
+            <li>Outstanding Researcher Award, LAU (2021)</li>
+            <li>Best Presentation Award, ICIET Japan (2022)</li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main bio -->
+      <div class="about__main">
+        <div class="section__header">
+          <h2 class="section__title">About Me</h2>
+        </div>
+
+        <p class="about__lead">
+          I am a PhD candidate in Demography and Sociology whose work sits at the intersection of planetary health,
+          environmental demography, and population well-being.
+        </p>
+        <p>
+          My background spans Electrical and Computer Engineering and International Affairs, training that I bring
+          to research questions requiring both technical rigor and policy relevance. Methodologically, I work at
+          the intersection of spatial analytics, causal inference, and applied public policy, building reproducible
+          pipelines that link remotely sensed climate surfaces (precipitation and temperature anomalies) with survey
+          and administrative microdata.
+        </p>
+        <p>
+          Substantively, I study how environmental shocks translate into unequal health and well-being outcomes,
+          with particular attention to children under five and pregnant women, and to the social stratification
+          that shapes exposure, disruption, and recovery. A recurring theme across my projects is that
+          administrative boundaries often obscure the ecological and climatic processes that drive risk in
+          low- and middle-income settings; I therefore emphasize exposure definitions grounded in environmental
+          context rather than political borders.
+        </p>
+        <p>
+          I was born in Beirut, Lebanon, an origin that continues to shape how I think about inequality,
+          risk, and the ways institutions and infrastructure structure everyday life. My academic path has
+          been deliberately cumulative: from engineering to international affairs to demography, statistics,
+          and urban spatial analytics.
+        </p>
+
+        <div class="education">
+          <h3>Education</h3>
+          <div class="edu-item">
+            <span class="edu-year">2023 – 2028 (exp.)</span>
+            <div>
+              <strong>PhD in Demography &amp; Sociology</strong>
+              <span>University of Pennsylvania</span>
+            </div>
+          </div>
+          <div class="edu-item">
+            <span class="edu-year">2023 – 2028 (exp.)</span>
+            <div>
+              <strong>MA in Demography</strong>
+              <span>University of Pennsylvania</span>
+            </div>
+          </div>
+          <div class="edu-item">
+            <span class="edu-year">2023 – 2028 (exp.)</span>
+            <div>
+              <strong>MA in Statistics and Data Science</strong>
+              <span>University of Pennsylvania</span>
+            </div>
+          </div>
+          <div class="edu-item">
+            <span class="edu-year">2023 – 2028 (exp.)</span>
+            <div>
+              <strong>MA in Urban Spatial Analytics</strong>
+              <span>University of Pennsylvania</span>
+            </div>
+          </div>
+          <div class="edu-item">
+            <span class="edu-year">2021 – 2023</span>
+            <div>
+              <strong>MA in International Affairs</strong>
+              <span>Lebanese American University</span>
+            </div>
+          </div>
+          <div class="edu-item">
+            <span class="edu-year">2015 – 2019</span>
+            <div>
+              <strong>BE in Electrical &amp; Computer Engineering</strong>
+              <span>Lebanese American University</span>
+            </div>
+          </div>
+        </div>
+      </div><!-- /about__main -->
+
+    </div><!-- /about__grid -->
+  </div>
+</section>
+
+
+<!-- ╔══════════════════════════════════╗
+     ║  RESEARCH THEMES                 ║
+     ╚══════════════════════════════════╝ -->
+<section class="section section--dark" id="research">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title section__title--light">Research Themes</h2>
+      <p class="section__subtitle section__subtitle--light">
+        Empirical work at the intersection of climate, health, and social stratification, built for reproducibility and policy legibility.
+      </p>
+    </div>
+
+    <div class="themes__grid">
+
+      <div class="theme-card reveal">
+        <div class="theme-card__icon" aria-hidden="true">
+          <!-- Leaf / Planetary Health -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13c0-3.87 3.13-7 7-7 3.87 0 7 3.13 7 7v1"/><path d="M11 20c0-3.87 3.13-7 7-7h1"/><path d="m3 3 18 18"/></svg>
+        </div>
+        <h3>Planetary Health</h3>
+        <p>Examining how the degradation of natural systems, from deforestation and fossil fuel extraction to ocean warming, produces measurable harm to human populations, with a focus on the most vulnerable groups in low- and middle-income settings.</p>
+      </div>
+
+      <div class="theme-card reveal">
+        <div class="theme-card__icon" aria-hidden="true">
+          <!-- Globe / Environmental Demography -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+        </div>
+        <h3>Environmental Demography</h3>
+        <p>Linking acute and cumulative environmental hazards, including forest fires, oil spills, floods, and air pollution, to population-level health and mortality outcomes. I pay particular attention to how social stratification shapes who is exposed, who recovers, and who bears lasting consequences.</p>
+      </div>
+
+      <div class="theme-card reveal">
+        <div class="theme-card__icon" aria-hidden="true">
+          <!-- Cloud / Climate-Health -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+        </div>
+        <h3>Climate-Health Linkages</h3>
+        <p>Multi-country analysis of how precipitation and temperature anomalies stratify child nutrition, diarrheal disease, and respiratory outcomes across biomes. I use DHS and MICS microdata linked to CHIRPS and NOAA raster surfaces, with a core argument that biome context outperforms administrative fixed effects as a control strategy.</p>
+      </div>
+
+      <div class="theme-card reveal">
+        <div class="theme-card__icon" aria-hidden="true">
+          <!-- Map / Spatial Analytics -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+        </div>
+        <h3>Spatial Analytics</h3>
+        <p>Building reproducible geospatial pipelines that extract remotely sensed climate surfaces, apply vector and raster operations, and integrate satellite data with geocoded survey microdata. Tools include R, ArcGIS Pro, CHIRPS, NOAA grids, and NetCDF workflows designed for replication and scale.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ╔══════════════════════════════════╗
+     ║  SKILLS                          ║
+     ╚══════════════════════════════════╝ -->
+<section class="section section--alt" id="skills">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">Technical Skills</h2>
+      <p class="section__subtitle">Reproducible, policy-relevant analytics built across the full pipeline: from raw raster to final report.</p>
+    </div>
+
+    <div class="skills__grid">
+
+      <div class="skill-cat reveal">
+        <div class="skill-cat__title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Programming Languages
+        </div>
+        <div class="tags">
+          <span class="tag tag--highlight">R (primary)</span>
+          <span class="tag tag--highlight">Stata</span>
+          <span class="tag tag--highlight">Python</span>
+          <span class="tag">Java</span>
+          <span class="tag">Assembly</span>
+        </div>
+      </div>
+
+      <div class="skill-cat reveal">
+        <div class="skill-cat__title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+          GIS &amp; Remote Sensing
+        </div>
+        <div class="tags">
+          <span class="tag tag--highlight">ArcGIS Pro</span>
+          <span class="tag tag--highlight">Vector GIS</span>
+          <span class="tag tag--highlight">Raster Analysis</span>
+          <span class="tag">CHIRPS</span>
+          <span class="tag">NOAA Climate Surfaces</span>
+          <span class="tag">NetCDF / GeoTIFF</span>
+          <span class="tag">Point-in-Polygon</span>
+          <span class="tag">Spatial Joins &amp; Overlays</span>
+        </div>
+      </div>
+
+      <div class="skill-cat reveal">
+        <div class="skill-cat__title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Statistical Methods
+        </div>
+        <div class="tags">
+          <span class="tag tag--highlight">OLS / GLM</span>
+          <span class="tag tag--highlight">Fixed Effects</span>
+          <span class="tag tag--highlight">IV Regression</span>
+          <span class="tag tag--highlight">Diff-in-Diff</span>
+          <span class="tag">Mediation Analysis</span>
+          <span class="tag">Predictive Margins</span>
+          <span class="tag">Multistate Life Tables</span>
+          <span class="tag">Spatial Econometrics</span>
+        </div>
+      </div>
+
+      <div class="skill-cat reveal">
+        <div class="skill-cat__title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          Machine Learning
+        </div>
+        <div class="tags">
+          <span class="tag tag--gold">NLP</span>
+          <span class="tag tag--gold">Reinforcement Learning</span>
+          <span class="tag tag--gold">CNN</span>
+          <span class="tag tag--gold">RNN</span>
+          <span class="tag tag--gold">Decision Trees</span>
+          <span class="tag">K-Means Clustering</span>
+        </div>
+      </div>
+
+      <div class="skill-cat reveal">
+        <div class="skill-cat__title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Tools &amp; Software
+        </div>
+        <div class="tags">
+          <span class="tag tag--highlight">Quarto / R Markdown</span>
+          <span class="tag tag--highlight">Git / GitHub</span>
+          <span class="tag">LaTeX</span>
+          <span class="tag">Tableau</span>
+          <span class="tag">MATLAB</span>
+          <span class="tag">SPSS</span>
+        </div>
+      </div>
+
+      <div class="skill-cat reveal">
+        <div class="skill-cat__title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Languages
+        </div>
+        <div class="tags">
+          <span class="tag tag--highlight">English (Bilingual)</span>
+          <span class="tag tag--highlight">Arabic (Native)</span>
+        </div>
+      </div>
+
+    </div><!-- /skills__grid -->
+  </div>
+</section>
+
+
+<!-- ╔══════════════════════════════════╗
+     ║  EXPERIENCE                      ║
+     ╚══════════════════════════════════╝ -->
+<section class="section section--alt" id="experience">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">Experience</h2>
+      <p class="section__subtitle">Research, policy, and academic appointments across institutions.</p>
+    </div>
+
+    <div class="exp__list">
+
+      <div class="exp-item exp-item--current reveal">
+        <div class="exp-item__left">
+          <span class="exp-period">2025 – 2026</span>
+          <span class="exp-org-tag">UPenn · GSE</span>
+        </div>
+        <div class="exp-item__right">
+          <div class="exp-item__top">
+            <h3>Teaching Assistant</h3>
+            <span class="badge badge--review">Current</span>
+          </div>
+          <p class="exp-org-full">Graduate School of Education, University of Pennsylvania</p>
+          <p>Lead lab sessions on Stata for <em>Principles of Monitoring and Evaluation</em>, a graduate-level course. Design problem sets, grade assignments, and provide one-on-one statistical support to master's students.</p>
+        </div>
+      </div>
+
+      <div class="exp-item exp-item--current reveal">
+        <div class="exp-item__left">
+          <span class="exp-period">2023 – Present</span>
+          <span class="exp-org-tag">UPenn · PIRE</span>
+        </div>
+        <div class="exp-item__right">
+          <div class="exp-item__top">
+            <h3>Research Assistant</h3>
+            <span class="badge badge--review">Current</span>
+          </div>
+          <p class="exp-org-full">NSF-PIRE Project, University of Pennsylvania</p>
+          <p>NSF-funded research project on environmental degradation and child development. Lead analyst on <em>Born in a Haze</em>, building geospatial pipelines that link MODIS fire data to child anthropometric outcomes across IFLS survey waves.</p>
+        </div>
+      </div>
+
+      <div class="exp-item exp-item--current reveal">
+        <div class="exp-item__left">
+          <span class="exp-period">2023 – Present</span>
+          <span class="exp-org-tag">UPenn · Sociology</span>
+        </div>
+        <div class="exp-item__right">
+          <div class="exp-item__top">
+            <h3>Statistical Consultant</h3>
+            <span class="badge badge--review">Current</span>
+          </div>
+          <p class="exp-org-full">Department of Sociology, University of Pennsylvania</p>
+          <p>Provide statistical support to PhD students in Sociology and Demography. Conduct workshops on machine learning techniques including NLP, neural networks, and decision trees for applied social science research.</p>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-item__left">
+          <span class="exp-period">2022 – 2023</span>
+          <span class="exp-org-tag">UNDP · OAI</span>
+        </div>
+        <div class="exp-item__right">
+          <div class="exp-item__top">
+            <h3>Research Intern</h3>
+          </div>
+          <p class="exp-org-full">Office of Audit and Investigations, United Nations Development Programme</p>
+          <p>Drafted investigation plans and formal reports; conducted stakeholder interviews in support of audit and oversight functions across UNDP country offices.</p>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-item__left">
+          <span class="exp-period">2022 – 2023</span>
+          <span class="exp-org-tag">CIP</span>
+        </div>
+        <div class="exp-item__right">
+          <div class="exp-item__top">
+            <h3>Research Intern</h3>
+          </div>
+          <p class="exp-org-full">Technology Policy Program, Center for International Policy</p>
+          <p>Designed and maintained a Social Media Harms tracker. Authored policy briefs and attended U.S. legislative hearings to monitor technology governance developments.</p>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-item__left">
+          <span class="exp-period">2022</span>
+          <span class="exp-org-tag">UN ESCWA</span>
+        </div>
+        <div class="exp-item__right">
+          <div class="exp-item__top">
+            <h3>Research Assistant – Individual Contractor</h3>
+          </div>
+          <p class="exp-org-full">United Nations Economic and Social Commission for Western Asia</p>
+          <p>Rebuilt and expanded a regional social demographic database, increasing data completeness from 29% to 83% across member states through systematic data collection and validation.</p>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-item__left">
+          <span class="exp-period">2019 – 2021</span>
+          <span class="exp-org-tag">LAU</span>
+        </div>
+        <div class="exp-item__right">
+          <div class="exp-item__top">
+            <h3>Monitoring &amp; Evaluation Officer</h3>
+          </div>
+          <p class="exp-org-full">Graduate Studies and Research, Lebanese American University</p>
+          <p>Designed and implemented M&amp;E frameworks for research initiatives. Tracked performance indicators, produced evaluation reports, and supported grant compliance for university-level research programs.</p>
+        </div>
+      </div>
+
+    </div><!-- /exp__list -->
+  </div>
+</section>
+
+
+<!-- ╔══════════════════════════════════╗
+     ║  PROJECTS                        ║
+     ╚══════════════════════════════════╝ -->
+<section class="section" id="projects">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">Projects</h2>
+      <p class="section__subtitle">Ongoing research papers and applied analytics work.</p>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="projects__tabs" role="tablist">
+      <button class="tab-btn active" data-tab="all"      role="tab" aria-selected="true">All</button>
+      <button class="tab-btn"        data-tab="research" role="tab">Research Papers</button>
+      <button class="tab-btn"        data-tab="analytics" role="tab">Analytics Projects</button>
+    </div>
+
+    <!-- Grid -->
+    <div class="projects__grid">
+
+      <!-- ── RESEARCH PAPERS ─────────────────── -->
+      <div class="project-card reveal" data-group="research">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--review">Working Paper</span>
+        </div>
+        <h3>Born in a Haze: Early-Life Exposure to Forest Fires &amp; Child Health in Indonesia</h3>
+        <p>Examines the impact of forest fire–related haze on children's HAZ/WAZ growth indicators using IFLS panel data. Develops clustering algorithms and k-means quintile regression for fire exposure construction.</p>
+        <div class="project-card__tags">
+          <span class="tag tag--highlight">Indonesia</span>
+          <span class="tag">IFLS</span>
+          <span class="tag">Child Health</span>
+          <span class="tag">Remote Sensing</span>
+        </div>
+        <div class="project-card__links">
+          <a href="articles.html" class="btn btn-sm btn-teal">Details</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-group="research">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--progress">In Progress</span>
+        </div>
+        <h3>Crude Consequences: Oil Spills, Child Health &amp; Environmental Vulnerability in Nigeria</h3>
+        <p>Integrates MICS survey data with daily oil spill trackers. Explores stratified vulnerability by wealth, distance, and child age. Assesses acute and cumulative exposure pathways.</p>
+        <div class="project-card__tags">
+          <span class="tag tag--highlight">Nigeria</span>
+          <span class="tag">MICS</span>
+          <span class="tag">Oil Spills</span>
+          <span class="tag">IV Regression</span>
+        </div>
+        <div class="project-card__links">
+          <a href="articles.html" class="btn btn-sm btn-teal">Details</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-group="research">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--progress">In Progress</span>
+        </div>
+        <h3>Climate–Health across Biomes: Precipitation &amp; Temperature Impacts on Children's Health</h3>
+        <p>Multi-country analysis linking CHIRPS/NOAA climate anomalies to diarrhea, fever, cough, and WHZ outcomes. Tests whether biome context moderates climate–health relationships beyond administrative controls.</p>
+        <div class="project-card__tags">
+          <span class="tag tag--highlight">Multi-Country</span>
+          <span class="tag">DHS / MICS</span>
+          <span class="tag">CHIRPS</span>
+          <span class="tag">Biomes</span>
+        </div>
+        <div class="project-card__links">
+          <a href="articles.html" class="btn btn-sm btn-teal">Details</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-group="research">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--progress">In Progress</span>
+        </div>
+        <h3>Cross-Border Nutritional Vulnerability in Shared Ecologies (India, Bangladesh, Nepal)</h3>
+        <p>DHS-based spatial analysis of child undernutrition near political borders. Tests whether ecological context outweighs political jurisdiction in shaping stunting and wasting risk.</p>
+        <div class="project-card__tags">
+          <span class="tag tag--highlight">South Asia</span>
+          <span class="tag">DHS</span>
+          <span class="tag">Spatial Regression</span>
+          <span class="tag">Nutrition</span>
+        </div>
+        <div class="project-card__links">
+          <a href="articles.html" class="btn btn-sm btn-teal">Details</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-group="research">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--progress">In Progress</span>
+        </div>
+        <h3>CRAM: Climate-Resilient Access Metric for Healthcare Isolation</h3>
+        <p>Developing an index to measure the resilience of healthcare access to climate shocks. Focus on flood seasonality, road network disruption, and maternal health risks in vulnerable regions.</p>
+        <div class="project-card__tags">
+          <span class="tag tag--highlight">Healthcare Access</span>
+          <span class="tag">Flood Risk</span>
+          <span class="tag">Index Construction</span>
+          <span class="tag">Maternal Health</span>
+        </div>
+        <div class="project-card__links">
+          <a href="articles.html" class="btn btn-sm btn-teal">Details</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-group="research">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--progress">In Progress</span>
+        </div>
+        <h3>Long-Term PM2.5 Exposure &amp; Cardiovascular Disease in Indonesia</h3>
+        <p>Cohort-based study using IFLS (2000–2014) linking cumulative PM2.5 pollution exposure to morbidity-adjusted CVD outcomes. Models dose-response relationships with lagged exposure windows.</p>
+        <div class="project-card__tags">
+          <span class="tag tag--highlight">Indonesia</span>
+          <span class="tag">PM2.5</span>
+          <span class="tag">CVD</span>
+          <span class="tag">Panel Data</span>
+        </div>
+        <div class="project-card__links">
+          <a href="articles.html" class="btn btn-sm btn-teal">Details</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-group="research">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--review">Under Review</span>
+        </div>
+        <h3>Disparate Social Impacts by Satellite and Self-Report: Floods in Pernambuco, Brazil</h3>
+        <p>Examines divergence between satellite-derived flood inundation extent and self-reported flood exposure using survey data. Explores social stratification of measurement discordance.</p>
+        <div class="project-card__tags">
+          <span class="tag tag--highlight">Brazil</span>
+          <span class="tag">Floods</span>
+          <span class="tag">Remote Sensing</span>
+          <span class="tag">Measurement</span>
+        </div>
+        <div class="project-card__links">
+          <a href="articles.html" class="btn btn-sm btn-teal">Details</a>
+        </div>
+      </div>
+
+      <!-- ── ANALYTICS PROJECTS ──────────────── -->
+      <div class="project-card reveal" data-group="analytics">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--methods">Spatial ML</span>
+        </div>
+        <h3>Space-Time Predictions of Indego Bike Share Demand</h3>
+        <p>Space–time prediction and cross-validation with an emphasis on operationally meaningful model performance. Engineered temporal and spatial lag features; evaluated with spatial cross-validation.</p>
+        <div class="project-card__tags">
+          <span class="tag">R</span>
+          <span class="tag">Spatial ML</span>
+          <span class="tag">Philadelphia</span>
+          <span class="tag">Time Series</span>
+        </div>
+        <div class="project-card__links">
+          <a href="https://mohamadalabbas-phd.github.io/PPA.Portfolio/R_Projects/Assignment_5/assignment5.html" class="btn btn-sm btn-teal" target="_blank">View Project ↗</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-group="analytics">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--methods">Predictive Modeling</span>
+        </div>
+        <h3>House Price Prediction – Technical Appendix</h3>
+        <p>Methods-first technical report: OLS with spatial fixed effects, assumption diagnostics, heteroscedasticity tests, and a reproducible workflow for hedonic pricing analysis.</p>
+        <div class="project-card__tags">
+          <span class="tag">R</span>
+          <span class="tag">OLS</span>
+          <span class="tag">Fixed Effects</span>
+          <span class="tag">Diagnostics</span>
+        </div>
+        <div class="project-card__links">
+          <a href="https://mohamadalabbas-phd.github.io/PPA.Portfolio/R_Projects/midterm/appendix/Midterm_2025.html" class="btn btn-sm btn-teal" target="_blank">View Project ↗</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-group="analytics">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--spatial">Spatial Analysis</span>
+        </div>
+        <h3>Spatially &amp; Temporally-Lagged Eviction Filings Prediction</h3>
+        <p>Capstone workflow integrating spatial lag models, temporal feature engineering, and validation for eviction filing prediction. Full pipeline from raw data to policy-ready output.</p>
+        <div class="project-card__tags">
+          <span class="tag">R</span>
+          <span class="tag">Spatial Lags</span>
+          <span class="tag">Eviction</span>
+          <span class="tag">Policy</span>
+        </div>
+        <div class="project-card__links">
+          <a href="https://mohamadalabbas-phd.github.io/PPA.Portfolio/R_Projects/Final/final_challenge.html" class="btn btn-sm btn-teal" target="_blank">View Project ↗</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-group="analytics">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--spatial">GIS / Narrative</span>
+        </div>
+        <h3>ArcGIS StoryMap: Lebanon Solar Panel Adoption</h3>
+        <p>Interactive ArcGIS StoryMaps project mapping solar panel adoption rates across Lebanese municipalities. Combines narrative, geospatial evidence, and policy recommendations.</p>
+        <div class="project-card__tags">
+          <span class="tag">ArcGIS Pro</span>
+          <span class="tag">StoryMaps</span>
+          <span class="tag">Lebanon</span>
+          <span class="tag">Energy Policy</span>
+        </div>
+        <div class="project-card__links">
+          <a href="https://storymaps.arcgis.com/stories/3d8987d329064940b62db4431ac9ac99" class="btn btn-sm btn-teal" target="_blank">View StoryMap ↗</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-group="analytics">
+        <div class="project-card__top">
+          <span></span>
+          <span class="badge badge--spatial">Healthcare Equity</span>
+        </div>
+        <h3>Healthcare Access and Equity in Pennsylvania</h3>
+        <p>Spatial analysis of healthcare facility distribution and access disparities across Pennsylvania counties. Combines Census data, facility locations, and travel-time buffers.</p>
+        <div class="project-card__tags">
+          <span class="tag">R</span>
+          <span class="tag">Healthcare</span>
+          <span class="tag">Pennsylvania</span>
+          <span class="tag">Equity</span>
+        </div>
+        <div class="project-card__links">
+          <a href="https://mohamadalabbas-phd.github.io/PPA.Portfolio/R_Projects/Assignment_2/AlAbbas_Mohamad_Assignment2.html" class="btn btn-sm btn-teal" target="_blank">View Project ↗</a>
+        </div>
+      </div>
+
+    </div><!-- /projects__grid -->
+  </div>
+</section>
+
+
+<!-- ╔══════════════════════════════════╗
+     ║  TEACHING                        ║
+     ╚══════════════════════════════════╝ -->
+<section class="section section--alt" id="teaching">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">Teaching &amp; Mentoring</h2>
+      <p class="section__subtitle">Lab instruction, statistical consulting, and graduate-level workshops.</p>
+    </div>
+
+    <div class="teaching__grid">
+
+      <div class="teach-card reveal">
+        <div class="teach-card__header">
+          <span class="badge badge--review">Current</span>
+          <span class="teach-card__year">2025 – 2026</span>
+        </div>
+        <h3>Principles of Monitoring &amp; Evaluation</h3>
+        <p class="teach-card__role">Teaching Assistant · Graduate School of Education, UPenn</p>
+        <p>Lead weekly Stata lab sessions for a graduate course on M&amp;E design and quantitative methods. Develop exercises, support student projects, and provide statistical consulting during office hours.</p>
+        <div class="tags" style="margin-top:.9rem;">
+          <span class="tag">Stata</span>
+          <span class="tag">M&amp;E Design</span>
+          <span class="tag">Causal Inference</span>
+        </div>
+      </div>
+
+      <div class="teach-card reveal">
+        <div class="teach-card__header">
+          <span class="badge badge--review">Current</span>
+          <span class="teach-card__year">2023 – Present</span>
+        </div>
+        <h3>Machine Learning for Social Scientists</h3>
+        <p class="teach-card__role">Workshop Instructor &amp; Statistical Consultant · Dept. of Sociology, UPenn</p>
+        <p>Design and deliver workshops on applied machine learning for PhD students in Sociology and Demography. Topics include NLP, neural networks (CNN/RNN), and decision trees for social science data.</p>
+        <div class="tags" style="margin-top:.9rem;">
+          <span class="tag">R</span>
+          <span class="tag">Python</span>
+          <span class="tag">NLP</span>
+          <span class="tag">Neural Networks</span>
+        </div>
+      </div>
+
+      <div class="teach-card reveal">
+        <div class="teach-card__header">
+          <span class="badge badge--progress">Past</span>
+          <span class="teach-card__year">2019 – 2021</span>
+        </div>
+        <h3>Electrical &amp; Computer Engineering</h3>
+        <p class="teach-card__role">Graduate Teaching Assistant · Lebanese American University</p>
+        <p>Assisted with undergraduate ECE coursework including circuits, signals, and programming. Led lab sessions, graded assignments, and supported students during exam preparation across two academic years.</p>
+        <div class="tags" style="margin-top:.9rem;">
+          <span class="tag">MATLAB</span>
+          <span class="tag">Java</span>
+          <span class="tag">Circuit Analysis</span>
+        </div>
+      </div>
+
+    </div><!-- /teaching__grid -->
+  </div>
+</section>
+
+
+<!-- ╔══════════════════════════════════╗
+     ║  ARTICLES TEASER                 ║
+     ╚══════════════════════════════════╝ -->
+<div class="articles-teaser">
+  <div class="container articles-teaser__inner">
+    <div class="articles-teaser__text">
+      <h2>Articles &amp; Code</h2>
+      <p>
+        Deep-dives, working notes, and reproducible analyses, each linked to its data pipeline and code on GitHub.
+      </p>
+    </div>
+    <a href="articles.html" class="btn btn-primary">Browse All Articles →</a>
+  </div>
+</div>
+
+
+<!-- ╔══════════════════════════════════╗
+     ║  CONTACT                         ║
+     ╚══════════════════════════════════╝ -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">Get in Touch</h2>
+    </div>
+
+    <div class="contact__grid">
+      <div class="contact__intro">
+        <h3>Let's connect</h3>
+        <p>
+          I'm open to conversations about research collaborations, consulting, data challenges in
+          environmental demography, or anything at the intersection of climate, health, and policy.
+          The best way to reach me is via email or LinkedIn.
+        </p>
+        <p>
+          I'm based at the University of Pennsylvania, Philadelphia, PA.
+        </p>
+      </div>
+
+      <div class="contact__links">
+        <a href="mailto:ma96@upenn.edu" class="contact-link">
+          <div class="contact-link__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+          </div>
+          <div>
+            <span class="contact-link__label">Email</span>
+            <span class="contact-link__value">ma96@upenn.edu</span>
+          </div>
+        </a>
+
+        <a href="https://github.com/MohamadAlAbbas-PhD" class="contact-link" target="_blank" rel="noopener">
+          <div class="contact-link__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          </div>
+          <div>
+            <span class="contact-link__label">GitHub</span>
+            <span class="contact-link__value">MohamadAlAbbas-PhD</span>
+          </div>
+        </a>
+
+        <a href="https://www.linkedin.com/in/mohammadalabbas96" class="contact-link" target="_blank" rel="noopener">
+          <div class="contact-link__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </div>
+          <div>
+            <span class="contact-link__label">LinkedIn</span>
+            <span class="contact-link__value">mohammadalabbas96</span>
+          </div>
+        </a>
+
+        <a href="https://scholar.google.com/citations?user=hpTT5-4AAAAJ&hl=en&oi=ao" class="contact-link" target="_blank" rel="noopener">
+          <div class="contact-link__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 9a8 8 0 0 1 7.162 4.44L24 9.5z"/></svg>
+          </div>
+          <div>
+            <span class="contact-link__label">Google Scholar</span>
+            <span class="contact-link__value">View Publication Profile ↗</span>
+          </div>
+        </a>
+
+        <a href="https://orcid.org/0000-0002-2084-8856" class="contact-link" target="_blank" rel="noopener">
+          <div class="contact-link__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.016-5.325 5.016h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z"/></svg>
+          </div>
+          <div>
+            <span class="contact-link__label">ORCID</span>
+            <span class="contact-link__value">0000-0002-2084-8856</span>
+          </div>
+        </a>
+      </div><!-- /contact__links -->
+    </div><!-- /contact__grid -->
+  </div>
+</section>
+
+
+<!-- ╔══════════════════════════════════╗
+     ║  FOOTER                          ║
+     ╚══════════════════════════════════╝ -->
+<footer class="footer" role="contentinfo">
+  <div class="container footer__inner">
+    <span class="footer__brand">Mohamad AlAbbas</span>
+    <nav class="footer__nav" aria-label="Footer navigation">
+      <a href="#about">About</a>
+      <a href="#research">Research</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#teaching">Teaching</a>
+      <a href="articles.html">Articles</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <span class="footer__copy">© <span class="js-year"></span> Mohamad AlAbbas · Philadelphia, PA</span>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

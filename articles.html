@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Articles &amp; Code | Mohamad AlAbbas</title>
+  <meta name="description" content="Articles, working papers, and reproducible code by Mohamad AlAbbas: planetary health, environmental demography, and spatial analytics.">
+  <meta name="author" content="Mohamad AlAbbas">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── NAVIGATION ─────────────────────────────── -->
+<nav class="nav scrolled" id="nav" role="navigation" aria-label="Main navigation">
+  <div class="container nav__inner">
+    <a href="index.html" class="nav__brand" aria-label="Home">MA</a>
+
+    <button class="nav__toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav__menu" id="navMenu" role="list">
+      <li><a href="index.html#about"        class="nav__link">About</a></li>
+      <li><a href="index.html#research"     class="nav__link">Research</a></li>
+      <li><a href="index.html#skills"       class="nav__link">Skills</a></li>
+      <li><a href="index.html#projects"     class="nav__link">Projects</a></li>
+      <li><a href="index.html#publications" class="nav__link">Publications</a></li>
+      <li><a href="articles.html"           class="nav__link active">Articles</a></li>
+      <li><a href="index.html#contact"      class="nav__link">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<!-- ── PAGE HEADER ────────────────────────────── -->
+<header class="page-header">
+  <div class="container page-header__content">
+    <h1>Articles &amp; Code</h1>
+    <p>
+      Working papers, deep-dives, and reproducible analyses. Each entry links to the paper, the data pipeline,
+      and code on GitHub so you can replicate or build on the work.
+    </p>
+
+    <!-- Filter buttons -->
+    <!--
+      HOW TO ADD A NEW ARTICLE
+      ─────────────────────────
+      1. Copy one of the <div class="article-card"> blocks below.
+      2. Update: title, venue, year, description, tags, and links.
+      3. Set data-cat to a comma-separated list from:
+            env-health | spatial | methods | policy | working-paper
+         This controls which filter button shows/hides the card.
+      4. Update the article-card__year span.
+      5. Add [Read Paper], [View Code], and/or [Blog Post] links inside article-card__links.
+    -->
+    <div class="articles-filter" role="group" aria-label="Filter articles">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="env-health">Climate &amp; Health</button>
+      <button class="filter-btn" data-filter="spatial">Spatial</button>
+      <button class="filter-btn" data-filter="methods">Methods</button>
+      <button class="filter-btn" data-filter="policy">Policy</button>
+      <button class="filter-btn" data-filter="working-paper">Working Papers</button>
+    </div>
+  </div>
+</header>
+
+
+<!-- ── ARTICLES ───────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="articles__grid">
+
+      <!-- ══════════════════════════════════════════
+           WORKING PAPERS / ONGOING RESEARCH
+           ══════════════════════════════════════════ -->
+
+      <!--
+        ┌──────────────────────────────────────────────────────────┐
+        │  TEMPLATE — copy this block and fill in your details      │
+        └──────────────────────────────────────────────────────────┘
+        <div class="article-card reveal" data-cat="env-health,working-paper">
+          <div class="article-card__body">
+            <div class="article-card__type">Working Paper</div>
+            <h3>Your Title Here</h3>
+            <div class="article-card__venue">Journal / Conference / Blog · Co-authors if any</div>
+            <p class="article-card__desc">
+              Short abstract or description (2–4 sentences).
+            </p>
+            <div class="article-card__tags">
+              <span class="tag">Tag 1</span>
+              <span class="tag">Tag 2</span>
+            </div>
+            <div class="article-card__links">
+              <a href="#" class="btn btn-sm btn-dark" target="_blank" rel="noopener">Read Paper ↗</a>
+              <a href="#" class="btn btn-sm btn-teal" target="_blank" rel="noopener">View Code ↗</a>
+              <a href="#" class="btn btn-sm btn-outline-dark" target="_blank" rel="noopener">Blog Post ↗</a>
+            </div>
+          </div>
+          <div class="article-card__meta">
+            <div class="article-card__year">2025</div>
+            <span class="badge badge--progress">In Progress</span>
+          </div>
+        </div>
+      -->
+
+      <div class="article-card reveal" data-cat="env-health,spatial,working-paper">
+        <div class="article-card__body">
+          <div class="article-card__type">Working Paper · Environmental Demography</div>
+          <h3>Born in a Haze: Early-Life Exposure to Forest Fires and Child Health in Indonesia</h3>
+          <div class="article-card__venue">NSF-PIRE Project · University of Pennsylvania</div>
+          <p class="article-card__desc">
+            Examines the impact of forest fire–related haze on children's height-for-age (HAZ) and weight-for-age
+            (WAZ) growth indicators using the Indonesia Family Life Survey (IFLS). Develops clustering algorithms
+            and k-means quintile regression for exposure construction from satellite fire data. Links remotely
+            sensed MODIS fire radiative power to geocoded child records across survey waves.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag tag--highlight">Indonesia</span>
+            <span class="tag">IFLS</span>
+            <span class="tag">Forest Fires</span>
+            <span class="tag">Child Anthropometrics</span>
+            <span class="tag">K-Means</span>
+            <span class="tag">Remote Sensing</span>
+          </div>
+          <div class="article-card__links">
+            <a href="https://github.com/MohamadAlAbbas-PhD" class="btn btn-sm btn-teal" target="_blank" rel="noopener">View Code ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2025</div>
+          <span class="badge badge--progress">In Progress</span>
+        </div>
+      </div>
+
+      <div class="article-card reveal" data-cat="env-health,spatial,working-paper">
+        <div class="article-card__body">
+          <div class="article-card__type">Working Paper · Environmental Demography</div>
+          <h3>Disparate Social Impacts by Satellite and Self-Report: Floods in Pernambuco, Brazil</h3>
+          <div class="article-card__venue">Population &amp; Environment (Under Review)</div>
+          <p class="article-card__desc">
+            Examines divergence between satellite-derived flood inundation extent and self-reported flood
+            exposure using household survey data in Pernambuco, Brazil. Explores the social stratification
+            of measurement discordance: who under-reports, and why that matters for policy targeting.
+            Employs logistic regression and spatial lag models.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag tag--highlight">Brazil</span>
+            <span class="tag">Floods</span>
+            <span class="tag">Remote Sensing</span>
+            <span class="tag">Survey Methods</span>
+            <span class="tag">Stratification</span>
+          </div>
+          <div class="article-card__links">
+            <a href="https://github.com/MohamadAlAbbas-PhD" class="btn btn-sm btn-teal" target="_blank" rel="noopener">View Code ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2024</div>
+          <span class="badge badge--review">Under Review</span>
+        </div>
+      </div>
+
+      <div class="article-card reveal" data-cat="env-health,spatial,working-paper">
+        <div class="article-card__body">
+          <div class="article-card__type">Working Paper · Climate &amp; Health</div>
+          <h3>Climate–Health across Biomes: Stratified Impacts of Precipitation and Temperature on Children's Health</h3>
+          <div class="article-card__venue">Multi-country analysis · In progress</div>
+          <p class="article-card__desc">
+            Links CHIRPS precipitation and NOAA temperature anomalies to diarrhea, fever, cough, and
+            weight-for-height (WHZ) outcomes across multiple countries. Tests whether biome context,
+            rather than administrative-unit fixed effects, moderates climate-health relationships,
+            using interaction models and predictive margins.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag tag--highlight">Multi-Country</span>
+            <span class="tag">DHS / MICS</span>
+            <span class="tag">CHIRPS</span>
+            <span class="tag">Biomes</span>
+            <span class="tag">Interaction Models</span>
+          </div>
+          <div class="article-card__links">
+            <a href="https://github.com/MohamadAlAbbas-PhD" class="btn btn-sm btn-teal" target="_blank" rel="noopener">View Code ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2025</div>
+          <span class="badge badge--progress">In Progress</span>
+        </div>
+      </div>
+
+      <div class="article-card reveal" data-cat="env-health,working-paper">
+        <div class="article-card__body">
+          <div class="article-card__type">Working Paper · Environmental Health</div>
+          <h3>Crude Consequences: The Impact of Oil Spills on Child Health and Environmental Vulnerability in Nigeria</h3>
+          <div class="article-card__venue">Nigeria MICS · In progress</div>
+          <p class="article-card__desc">
+            Integrates MICS survey data with daily oil spill tracker records in Nigeria's Niger Delta.
+            Explores stratified vulnerability by wealth quintile, urban-rural status, and child age.
+            Uses IV regression with spill timing as an instrument to assess causal exposure pathways
+            to wasting and diarrhea.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag tag--highlight">Nigeria</span>
+            <span class="tag">MICS</span>
+            <span class="tag">Oil Spills</span>
+            <span class="tag">IV Regression</span>
+            <span class="tag">Child Health</span>
+          </div>
+          <div class="article-card__links">
+            <a href="https://github.com/MohamadAlAbbas-PhD" class="btn btn-sm btn-teal" target="_blank" rel="noopener">View Code ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2025</div>
+          <span class="badge badge--progress">In Progress</span>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PUBLISHED ARTICLES
+           ══════════════════════════════════════════ -->
+
+      <div class="article-card reveal" data-cat="policy">
+        <div class="article-card__body">
+          <div class="article-card__type">Published · Policy Brief</div>
+          <h3>Racism, Discrimination, and Scapegoating in the Era of COVID-19</h3>
+          <div class="article-card__venue">IMS Policy and Working Paper Series</div>
+          <p class="article-card__desc">
+            Analyzes the emergence of racialized blame during the COVID-19 pandemic, drawing on
+            historical parallels and contemporary data on anti-Asian discrimination in the United States
+            and globally. Frames policy recommendations for counter-narrative and legal protection.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag">COVID-19</span>
+            <span class="tag">Racism</span>
+            <span class="tag">Policy</span>
+            <span class="tag">Public Health</span>
+          </div>
+          <div class="article-card__links">
+            <!-- Update with DOI or URL when available -->
+            <a href="#" class="btn btn-sm btn-dark">Read Paper ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2023</div>
+          <span class="badge badge--published">Published</span>
+        </div>
+      </div>
+
+      <div class="article-card reveal" data-cat="env-health,policy">
+        <div class="article-card__body">
+          <div class="article-card__type">Published · Blog / Policy</div>
+          <h3>Environmental Determinants of Migration: Air Pollution in Developing Nations</h3>
+          <div class="article-card__venue">IMS Blog – Borders and Limitations</div>
+          <p class="article-card__desc">
+            Examines the causal pathways between ambient air pollution exposure and internal and
+            cross-border migration in developing nations. Reviews empirical evidence and argues for
+            pollution-adjusted migration modeling in climate adaptation policy.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag">Air Pollution</span>
+            <span class="tag">Migration</span>
+            <span class="tag">Developing Nations</span>
+            <span class="tag">Climate Policy</span>
+          </div>
+          <div class="article-card__links">
+            <a href="#" class="btn btn-sm btn-dark">Read Article ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2022</div>
+          <span class="badge badge--published">Published</span>
+        </div>
+      </div>
+
+      <div class="article-card reveal" data-cat="methods,policy">
+        <div class="article-card__body">
+          <div class="article-card__type">Published · Journal Article</div>
+          <h3>Formation of Policies Guided by Multivariable Control Theory</h3>
+          <div class="article-card__venue">Operations Research Perspectives</div>
+          <p class="article-card__desc">
+            Applies principles from multivariable control theory to policy formation, treating
+            governance outcomes as a dynamic system with feedback loops. Develops a formal framework
+            for modeling policy intervention timing and intensity.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag">Control Theory</span>
+            <span class="tag">Policy Modeling</span>
+            <span class="tag">Operations Research</span>
+          </div>
+          <div class="article-card__links">
+            <a href="#" class="btn btn-sm btn-dark">Read Paper ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2020</div>
+          <span class="badge badge--published">Published</span>
+        </div>
+      </div>
+
+      <div class="article-card reveal" data-cat="methods">
+        <div class="article-card__body">
+          <div class="article-card__type">Published · Journal Article</div>
+          <h3>Toward an Improvement of Engineering Teaming Skills Through an In-House Professionalism Course</h3>
+          <div class="article-card__venue">IEEE Transactions on Education</div>
+          <p class="article-card__desc">
+            Reports findings from a quasi-experimental evaluation of a professionalism course designed
+            to improve collaborative skills among undergraduate engineering students. Measures outcomes
+            using pre/post survey instruments and peer evaluation scores.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag">Engineering Education</span>
+            <span class="tag">Teamwork</span>
+            <span class="tag">IEEE</span>
+            <span class="tag">Evaluation</span>
+          </div>
+          <div class="article-card__links">
+            <a href="#" class="btn btn-sm btn-dark">Read Paper ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2020</div>
+          <span class="badge badge--published">Published</span>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           SPATIAL / ANALYTICS PROJECTS
+           ══════════════════════════════════════════ -->
+
+      <div class="article-card reveal" data-cat="spatial,methods">
+        <div class="article-card__body">
+          <div class="article-card__type">Analytics Project · Spatial Machine Learning</div>
+          <h3>Space-Time Predictions of Indego Bike Share Demand in Philadelphia</h3>
+          <div class="article-card__venue">MUSA / Urban Spatial Analytics · University of Pennsylvania</div>
+          <p class="article-card__desc">
+            Space–time prediction model for Indego bike share demand using engineered temporal lag features,
+            spatial lag features, and k-nearest neighbor spatial cross-validation. Emphasizes operationally
+            meaningful model performance metrics over conventional RMSE.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag tag--highlight">R</span>
+            <span class="tag">Space-Time Modeling</span>
+            <span class="tag">Philadelphia</span>
+            <span class="tag">Spatial CV</span>
+            <span class="tag">Bike Share</span>
+          </div>
+          <div class="article-card__links">
+            <a href="https://mohamadalabbas-phd.github.io/PPA.Portfolio/R_Projects/Assignment_5/assignment5.html" class="btn btn-sm btn-teal" target="_blank" rel="noopener">View Project ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2025</div>
+          <span class="badge badge--methods">Spatial ML</span>
+        </div>
+      </div>
+
+      <div class="article-card reveal" data-cat="spatial,methods">
+        <div class="article-card__body">
+          <div class="article-card__type">Analytics Project · Predictive Modeling</div>
+          <h3>House Price Prediction: Methods-First Technical Appendix</h3>
+          <div class="article-card__venue">MUSA / Urban Spatial Analytics · University of Pennsylvania</div>
+          <p class="article-card__desc">
+            A full technical report on hedonic house price prediction: OLS with spatial fixed effects,
+            linearity and heteroscedasticity diagnostics, Moran's I spatial autocorrelation tests,
+            and a fully reproducible R workflow documented in Quarto.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag tag--highlight">R</span>
+            <span class="tag">OLS</span>
+            <span class="tag">Spatial Fixed Effects</span>
+            <span class="tag">Diagnostics</span>
+            <span class="tag">Quarto</span>
+          </div>
+          <div class="article-card__links">
+            <a href="https://mohamadalabbas-phd.github.io/PPA.Portfolio/R_Projects/midterm/appendix/Midterm_2025.html" class="btn btn-sm btn-teal" target="_blank" rel="noopener">View Project ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2025</div>
+          <span class="badge badge--methods">Predictive</span>
+        </div>
+      </div>
+
+      <div class="article-card reveal" data-cat="spatial,policy,methods">
+        <div class="article-card__body">
+          <div class="article-card__type">Analytics Project · Policy Modeling</div>
+          <h3>Spatially &amp; Temporally-Lagged Eviction Filing Prediction</h3>
+          <div class="article-card__venue">MUSA / Urban Spatial Analytics · University of Pennsylvania</div>
+          <p class="article-card__desc">
+            Capstone workflow for eviction filing prediction integrating spatial lag variables, temporal
+            feature engineering, and spatial cross-validation. Full pipeline from raw administrative data
+            to policy-ready risk surface, with interpretable maps for housing practitioners.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag tag--highlight">R</span>
+            <span class="tag">Spatial Lags</span>
+            <span class="tag">Eviction</span>
+            <span class="tag">Housing Policy</span>
+            <span class="tag">Quarto</span>
+          </div>
+          <div class="article-card__links">
+            <a href="https://mohamadalabbas-phd.github.io/PPA.Portfolio/R_Projects/Final/final_challenge.html" class="btn btn-sm btn-teal" target="_blank" rel="noopener">View Project ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2025</div>
+          <span class="badge badge--spatial">Spatial</span>
+        </div>
+      </div>
+
+      <div class="article-card reveal" data-cat="spatial,policy">
+        <div class="article-card__body">
+          <div class="article-card__type">Interactive Map · ArcGIS StoryMap</div>
+          <h3>Lebanon Solar Panel Adoption: A Spatial Analysis</h3>
+          <div class="article-card__venue">ArcGIS Online StoryMaps</div>
+          <p class="article-card__desc">
+            Interactive ArcGIS StoryMaps project mapping municipal-level solar panel adoption rates
+            across Lebanon. Integrates economic, demographic, and infrastructure data. Combines narrative
+            writing with spatial evidence to produce actionable policy recommendations for energy planners.
+          </p>
+          <div class="article-card__tags">
+            <span class="tag tag--highlight">ArcGIS Pro</span>
+            <span class="tag">Lebanon</span>
+            <span class="tag">Energy Policy</span>
+            <span class="tag">StoryMaps</span>
+          </div>
+          <div class="article-card__links">
+            <a href="https://storymaps.arcgis.com/stories/3d8987d329064940b62db4431ac9ac99" class="btn btn-sm btn-teal" target="_blank" rel="noopener">View StoryMap ↗</a>
+          </div>
+        </div>
+        <div class="article-card__meta">
+          <div class="article-card__year">2023</div>
+          <span class="badge badge--spatial">GIS</span>
+        </div>
+      </div>
+
+    </div><!-- /articles__grid -->
+  </div>
+</section>
+
+
+<!-- ── FOOTER ─────────────────────────────────── -->
+<footer class="footer" role="contentinfo">
+  <div class="container footer__inner">
+    <span class="footer__brand">Mohamad AlAbbas</span>
+    <nav class="footer__nav" aria-label="Footer navigation">
+      <a href="index.html">Home</a>
+      <a href="index.html#research">Research</a>
+      <a href="index.html#publications">Publications</a>
+      <a href="articles.html">Articles</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <span class="footer__copy">© <span class="js-year"></span> Mohamad AlAbbas</span>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
