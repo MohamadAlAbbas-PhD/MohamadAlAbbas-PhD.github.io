@@ -48,7 +48,8 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 70px;
+  scroll-padding-top: 96px;
+  background: var(--navy); /* prevents white flash at top */
 }
 
 body {
@@ -181,36 +182,38 @@ ul { list-style: none; }
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  transition: background .35s ease, box-shadow .35s ease;
+  background: transparent;
+  transition: background .4s ease, box-shadow .4s ease;
 }
 
 .nav.scrolled {
   background: var(--navy);
-  box-shadow: 0 2px 24px rgba(0,0,0,.35);
+  box-shadow: 0 2px 24px rgba(0,0,0,.4);
 }
 
 .nav__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 88px;
-  transition: height .35s ease, padding .35s ease;
+  height: 96px;
+  transition: height .4s ease;
 }
 
 .nav.scrolled .nav__inner {
-  height: 60px;
+  height: 58px;
 }
 
 .nav__brand {
   font-family: var(--font-heading);
-  font-size: 1.85rem;
+  font-size: 1.9rem;
   font-weight: 700;
   color: var(--white);
   letter-spacing: -.02em;
-  transition: font-size .35s ease, color .25s ease;
+  transition: font-size .4s ease, color .25s ease;
+  white-space: nowrap;
 }
 .nav.scrolled .nav__brand {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 .nav__brand:hover { color: var(--teal); }
 
