@@ -8,13 +8,36 @@
 
   /* ── NAVIGATION ─────────────────────────────── */
   const nav       = document.getElementById('nav');
+  const navBrand  = document.getElementById('navBrand');
   const navToggle = document.getElementById('navToggle');
   const navMenu   = document.getElementById('navMenu');
 
-  // Shrink nav after scrolling past ~100px
+  // Scroll: shrink nav + hide links. Scroll back to top: restore links.
   window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 100);
+    const isScrolled = window.scrollY > 100;
+    nav.classList.toggle('scrolled', isScrolled);
+    // Auto-close expanded menu when back at top
+    if (!isScrolled) nav.classList.remove('nav--expanded');
   }, { passive: true });
+
+  // Click MA when scrolled → toggle links
+  if (navBrand) {
+    navBrand.addEventListener('click', e => {
+      if (nav.classList.contains('scrolled')) {
+        e.preventDefault();
+        nav.classList.toggle('nav--expanded');
+      }
+    });
+  }
+
+  // Close expanded menu when a nav link is clicked
+  if (navMenu) {
+    navMenu.querySelectorAll('.nav__link').forEach(link => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('nav--expanded');
+      });
+    });
+  }
 
   // Mobile hamburger toggle
   if (navToggle && navMenu) {
@@ -24,7 +47,7 @@
       navToggle.setAttribute('aria-expanded', open);
     });
 
-    // Close menu when a link is clicked
+    // Close mobile menu when a link is clicked
     navMenu.querySelectorAll('.nav__link').forEach(link => {
       link.addEventListener('click', () => {
         navMenu.classList.remove('open');
@@ -33,7 +56,7 @@
       });
     });
 
-    // Close menu on outside click
+    // Close mobile menu on outside click
     document.addEventListener('click', e => {
       if (!nav.contains(e.target)) {
         navMenu.classList.remove('open');
