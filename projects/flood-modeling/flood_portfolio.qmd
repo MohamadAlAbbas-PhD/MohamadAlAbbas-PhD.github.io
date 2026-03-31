@@ -1,0 +1,981 @@
+---
+title: "Flood Inundation Risk Modeling: Calgary 2013"
+subtitle: "Model Training, Validation, and Spatial Diagnostics"
+author: "Mohamad AlAbbas"
+date: today
+format:
+  html:
+    toc: true
+    toc-float: true
+    toc-depth: 2
+    code-fold: true
+    code-tools: true
+    theme: cosmo
+    fig-width: 9
+    fig-height: 6
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+  cache: false
+---
+
+```{r setup}
+#| label: setup
+#| include: false
+
+options(scipen = 999)
+dir.create("figures", showWarnings = FALSE)
+
+library(tidyverse)
+library(sf)
+library(terra)
+library(tidyterra)
+library(caret)
+library(pROC)
+library(plotROC)
+library(pscl)
+library(FNN)
+library(knitr)
+library(kableExtra)
+library(viridis)
+library(scales)
+library(broom)
+library(whitebox)
+
+theme_flood <- function(...) {
+  theme_void(base_family = "sans") +
+    theme(
+      plot.title    = element_text(size = 13, face = "bold", margin = margin(b = 4)),
+      plot.subtitle = element_text(size = 10, color = "grey40", margin = margin(b = 8)),
+      legend.title  = element_text(size = 9, face = "bold"),
+      legend.text   = element_text(size = 8),
+      plot.margin   = margin(10, 10, 10, 10),
+      ...
+    )
+}
+
+pal_flood <- c("#edf8fb", "#b3cde3", "#8c96c6", "#8856a7", "#810f7c")
+pal_conf  <- c(
+  "True Positive"  = "#1a9641",
+  "True Negative"  = "#a6d96a",
+  "False Positive" = "#d7191c",
+  "False Negative" = "#fdae61"
+)
+```
+
+---
+
+# 1. Study Area and Data
+
+```{r load-all}
+#| output: false
+
+# ── Boundary ─────────────────────────────────────────────────────────────────
+calgary_boundary <- st_read(
+  "data/calgary/midTermProject_Data/CALGIS_CITYBOUND_LIMIT/CALGIS_CITYBOUND_LIMIT.shp",
+  quiet = TRUE
+)
+
+calgary_boundary <- st_transform(calgary_boundary, crs = 32611)
+
+# ── DEM ──────────────────────────────────────────────────────────────────────
+dem_calgary_raw <- rast("data/calgary/midTermProject_Data/calgarydem/")
+NAflag(dem_calgary_raw) <- -32768
+dem_calgary <- project(dem_calgary_raw, "EPSG:32611", method = "bilinear")
+
+# ── Inundation raster ────────────────────────────────────────────────────────
+inundation_raw <- rast("data/calgary/midTermProject_Data/inundation/")
+NAflag(inundation_raw) <- 255
+rcl_matrix <- matrix(c(0, 0, 1, NA, 2, 1, 3, NA), ncol = 2, byrow = TRUE)
+flood_raster <- classify(inundation_raw, rcl = rcl_matrix, others = NA)
+flood_raster <- project(flood_raster, "EPSG:32611", method = "near")
+
+# ── Hydrology ────────────────────────────────────────────────────────────────
+hydro_raw <- read_csv("data/calgary/Hydrology_20260322.csv", show_col_types = FALSE)
+hydro_sf  <- st_as_sf(filter(hydro_raw, !is.na(MULTIPOLYGON)),
+                      wkt = "MULTIPOLYGON", crs = 4326)
+hydro_sf  <- st_transform(hydro_sf, crs = 32611)
+calgary_streams <- filter(hydro_sf, FEATURE_TYPE == "water course")
+calgary_lakes   <- filter(hydro_sf, FEATURE_TYPE == "lake")
+
+# ── Fishnet (60 m) ───────────────────────────────────────────────────────────
+cell_size       <- 60
+calgary_fishnet <- st_make_grid(calgary_boundary, cellsize = cell_size, square = TRUE)
+calgary_fishnet <- st_sf(calgary_fishnet)
+calgary_fishnet$uniqueID <- seq_len(nrow(calgary_fishnet))
+calgary_fishnet <- st_filter(calgary_fishnet, calgary_boundary)
+
+# ── Outcome variable ─────────────────────────────────────────────────────────
+fishnet_vect    <- vect(calgary_fishnet)
+flood_zonal     <- terra::extract(flood_raster, fishnet_vect, fun = "modal", na.rm = TRUE)
+calgary_fishnet$flood <- flood_zonal[[2]]
+calgary_fishnet <- calgary_fishnet[!is.na(calgary_fishnet$flood), ]
+fishnet_vect    <- vect(calgary_fishnet)
+```
+
+```{r summary-table}
+#| echo: false
+data.frame(
+  Item      = c("Study area", "Projection", "Cell size", "Total cells",
+                "Flooded cells", "Flood prevalence", "Water courses", "Lakes"),
+  Value     = c("Calgary, Alberta", "UTM Zone 11N (EPSG:32611)", "60 m × 60 m",
+                format(nrow(calgary_fishnet), big.mark = ","),
+                format(sum(calgary_fishnet$flood == 1), big.mark = ","),
+                paste0(round(mean(calgary_fishnet$flood) * 100, 1), "%"),
+                "415", "3,570")
+) |>
+  kable(col.names = c("", ""), caption = "Table 0. Study area summary") |>
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+```{r map-observed-flood}
+#| fig-cap: "Figure 1. Observed 2013 flood inundation derived from post-event satellite imagery. Blue = inundated; grey = dry land. Pre-existing water bodies and cloud-covered cells excluded."
+
+p_obs <- ggplot() +
+  geom_sf(data = calgary_fishnet, aes(fill = as.factor(flood)), color = "transparent") +
+  scale_fill_manual(
+    values = c("0" = "#dfe6e9", "1" = "#2471a3"),
+    labels = c("Not inundated", "Inundated (2013)"),
+    name   = ""
+  ) +
+  labs(
+    title    = "Observed Flood Inundation — Calgary 2013",
+    subtitle = "Reclassified satellite imagery; cloud cover and pre-existing water excluded"
+  ) +
+  theme_flood()
+
+p_obs
+ggsave("figures/fig1_observed_flood.png", p_obs, width = 9, height = 6, dpi = 300)
+```
+
+---
+
+# 2. Feature Engineering
+
+```{r features-terrain}
+#| output: false
+
+# Elevation percentile
+elev_zonal <- terra::extract(dem_calgary, fishnet_vect, fun = mean, na.rm = TRUE)
+calgary_fishnet$elev_raw  <- elev_zonal[[2]]
+calgary_fishnet$elevation <- rank(calgary_fishnet$elev_raw, ties.method = "average",
+                                  na.last = "keep") /
+                             sum(!is.na(calgary_fishnet$elev_raw)) * 100
+
+# Slope (computed; excluded — redundant with TWI)
+slope_rast  <- terrain(dem_calgary, v = "slope", unit = "degrees")
+slope_zonal <- terra::extract(slope_rast, fishnet_vect, fun = mean, na.rm = TRUE)
+calgary_fishnet$slope_raw <- slope_zonal[[2]]
+calgary_fishnet$slope     <- rank(calgary_fishnet$slope_raw, ties.method = "average",
+                                  na.last = "keep") /
+                             sum(!is.na(calgary_fishnet$slope_raw)) * 100
+```
+
+```{r features-whitebox}
+#| output: false
+
+dir.create("data/calgary/hydro_scratch", showWarnings = FALSE, recursive = TRUE)
+writeRaster(dem_calgary, "data/calgary/hydro_scratch/dem_utm.tif", overwrite = TRUE)
+
+wbt_fill_depressions_wang_and_liu(
+  dem    = "data/calgary/hydro_scratch/dem_utm.tif",
+  output = "data/calgary/hydro_scratch/dem_filled.tif"
+)
+wbt_d8_flow_accumulation(
+  input    = "data/calgary/hydro_scratch/dem_filled.tif",
+  output   = "data/calgary/hydro_scratch/flow_acc.tif",
+  out_type = "cells"
+)
+
+flow_acc_cal   <- rast("data/calgary/hydro_scratch/flow_acc.tif")
+dem_filled_cal <- rast("data/calgary/hydro_scratch/dem_filled.tif")
+
+# Flow accumulation — watershed feature (displayed; excluded from final model)
+fa_zonal <- terra::extract(flow_acc_cal, fishnet_vect, fun = mean, na.rm = TRUE)
+calgary_fishnet$flow_accum <- log1p(fa_zonal[[2]])
+
+# TWI
+slope_rad_cal <- terrain(dem_filled_cal, v = "slope", unit = "radians")
+slope_tan_cal <- ifel(tan(slope_rad_cal) < 0.001, 0.001, tan(slope_rad_cal))
+twi_rast_cal  <- log(flow_acc_cal / slope_tan_cal)
+twi_zonal     <- terra::extract(twi_rast_cal, fishnet_vect, fun = mean, na.rm = TRUE)
+calgary_fishnet$twi <- twi_zonal[[2]]
+```
+
+```{r features-hydro-ndwi-dd}
+#| output: false
+
+# KNN distance helper
+nn_distance <- function(from_sf, to_sf, k = 1) {
+  from_coords <- st_coordinates(st_centroid(from_sf))
+  to_coords   <- st_coordinates(st_centroid(to_sf))
+  nn_result   <- get.knnx(to_coords, from_coords, k = k)$nn.dist
+  nn_df       <- as.data.frame(nn_result)
+  nn_df$row   <- seq_len(nrow(nn_df))
+  nn_long     <- pivot_longer(nn_df, cols = -row, names_to = "k_idx", values_to = "dist")
+  summarise(group_by(nn_long, row), dist_river = mean(dist), .groups = "drop")$dist_river
+}
+
+calgary_fishnet$dist_river <- nn_distance(calgary_fishnet, calgary_streams)
+calgary_fishnet$dist_lake  <- nn_distance(calgary_fishnet, calgary_lakes)
+
+# NDWI
+B03 <- rast("data/calgary/sentinel2_B03.tiff") / 10000
+B08 <- rast("data/calgary/sentinel2_B08.tiff") / 10000
+ndwi_rast  <- project((B03 - B08) / (B03 + B08), "EPSG:32611", method = "bilinear")
+ndwi_zonal <- terra::extract(ndwi_rast, fishnet_vect, fun = mean, na.rm = TRUE)
+calgary_fishnet$ndwi <- ndwi_zonal[[2]]
+
+# Drainage density
+cell_area_m2    <- prod(res(flow_acc_cal))
+threshold_cells <- (25 * 1e6) / cell_area_m2
+stream_binary   <- ifel(flow_acc_cal >= threshold_cells, 1, 0)
+window_cells    <- 11
+w               <- matrix(1, nrow = window_cells, ncol = window_cells)
+stream_sum      <- focal(stream_binary, w = w, fun = "sum", na.rm = TRUE)
+window_area_km2 <- (window_cells * res(flow_acc_cal)[1])^2 / 1e6
+drain_dens_rast <- (stream_sum * res(flow_acc_cal)[1]) / (window_area_km2 * 1000)
+dd_zonal        <- terra::extract(drain_dens_rast, fishnet_vect, fun = mean, na.rm = TRUE)
+calgary_fishnet$drain_dens <- dd_zonal[[2]]
+```
+
+```{r features-lu-cn}
+#| output: false
+
+# Land use
+lu_raw <- read_csv("data/calgary/Land_Use_Districts_20260322.csv", show_col_types = FALSE)
+lu_sf  <- st_as_sf(filter(lu_raw, !is.na(MULTIPOLYGON)), wkt = "MULTIPOLYGON", crs = 4326)
+lu_sf  <- st_transform(lu_sf, crs = 32611)
+
+lu_sf$lu_class <- case_when(
+  lu_sf$MAJOR %in% c(
+    "Residential - Low Density", "Residential - Medium Density",
+    "Residential - High Density", "Commercial", "Commercial - Core",
+    "Mixed Use", "Institutional", "Direct Control", "Industrial",
+    "Major Infrastructure", "Transportation and Utility Corridor"
+  ) ~ 2L,
+  lu_sf$MAJOR %in% c(
+    "Parks, Recreation and Public Education", "Recreational",
+    "Future Urban Development"
+  ) ~ 3L,
+  TRUE ~ 2L
+)
+
+fishnet_centroids <- st_centroid(calgary_fishnet)
+lu_join <- st_join(fishnet_centroids, dplyr::select(lu_sf, lu_class), join = st_within)
+lu_modal <- lu_join |>
+  as.data.frame() |>
+  group_by(uniqueID) |>
+  summarise(lu_class = ifelse(any(lu_class == 2L, na.rm = TRUE), 2L, 3L), .groups = "drop")
+
+calgary_fishnet <- merge(calgary_fishnet, lu_modal, by = "uniqueID", all.x = TRUE)
+calgary_fishnet$lu_class[is.na(calgary_fishnet$lu_class)] <- 2L
+
+# Curve Number (computed; excluded — spatial confound in Calgary)
+soil_rast_raw        <- rast("data/HYSOGs250m.tif")
+calgary_boundary_wgs <- st_transform(calgary_boundary, crs = st_crs(soil_rast_raw))
+soil_utm <- project(
+  mask(crop(soil_rast_raw, vect(calgary_boundary_wgs)), vect(calgary_boundary_wgs)),
+  "EPSG:32611", method = "near"
+)
+
+cn_lookup <- data.frame(
+  lu_class  = c(2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3),
+  soil_code = c(1,2,3,4,11,12,13,14, 1,2,3,4,11,12,13,14),
+  CN        = c(67,77,83,87,77,82,85,87, 30,58,71,78,54,68,74.5,78)
+)
+
+soil_zonal <- terra::extract(soil_utm, fishnet_vect, fun = "modal", na.rm = TRUE)
+calgary_fishnet$soil_code <- as.integer(soil_zonal[[2]])
+calgary_fishnet <- merge(calgary_fishnet, cn_lookup,
+                         by = c("lu_class", "soil_code"), all.x = TRUE)
+calgary_fishnet$CN[is.na(calgary_fishnet$CN)] <- max(calgary_fishnet$CN, na.rm = TRUE)
+```
+
+## 2.1 Feature maps
+
+```{r map-elevation}
+#| fig-cap: "Figure 2. Elevation percentile rank. Flood cells (blue outlines) concentrate in the lowest decile of the city-wide elevation distribution — the primary flood driver."
+
+flooded_cells <- calgary_fishnet[calgary_fishnet$flood == 1, ]
+
+p_elev <- ggplot() +
+  geom_sf(data = calgary_fishnet, aes(fill = elevation), color = "transparent") +
+  geom_sf(data = flooded_cells, fill = "transparent", color = "#2471a3", linewidth = 0.12) +
+  scale_fill_viridis_c(
+    option = "magma", direction = -1,
+    name   = "Elevation\npercentile",
+    limits = c(0, 100),
+    labels = function(x) paste0(x, "th")
+  ) +
+  labs(
+    title    = "Elevation Percentile Rank — Calgary Fishnet",
+    subtitle = "0th = lowest cell; 100th = highest | Blue outlines = 2013 flood cells"
+  ) +
+  theme_flood()
+
+p_elev
+ggsave("figures/fig2_elevation.png", p_elev, width = 9, height = 6, dpi = 300)
+```
+
+```{r map-flow-accum}
+#| fig-cap: "Figure 3. Log-transformed flow accumulation (watershed feature). High values trace the Bow and Elbow river channels. This feature was computed but excluded from the final model — drainage density and TWI together capture the same signal more efficiently."
+
+p_fa <- ggplot() +
+  geom_sf(data = calgary_fishnet, aes(fill = flow_accum), color = "transparent") +
+  scale_fill_viridis_c(option = "mako", name = "log(Flow acc.)") +
+  labs(
+    title    = "Flow Accumulation (log-transformed) — Calgary",
+    subtitle = "Watershed feature: traces the Bow and Elbow drainage network"
+  ) +
+  theme_flood()
+
+p_fa
+ggsave("figures/fig3_flow_accum.png", p_fa, width = 9, height = 6, dpi = 300)
+```
+
+```{r map-dist-river}
+#| fig-cap: "Figure 4. Distance to nearest water course (m). Proximity to stream channels is a direct measure of flood exposure — cells within ~500 m of the Bow and Elbow rivers account for the vast majority of inundation."
+
+p_dist <- ggplot() +
+  geom_sf(data = calgary_fishnet, aes(fill = dist_river), color = "transparent") +
+  geom_sf(data = calgary_streams, fill = "#2471a3", color = "transparent", alpha = 0.8) +
+  scale_fill_viridis_c(
+    option = "rocket", direction = -1,
+    name = "Distance (m)", labels = comma
+  ) +
+  labs(
+    title    = "Distance to Nearest Water Course — Calgary",
+    subtitle = "Blue = water course polygons; darker fill = closer to stream"
+  ) +
+  theme_flood()
+
+p_dist
+ggsave("figures/fig4_dist_river.png", p_dist, width = 9, height = 6, dpi = 300)
+```
+
+```{r map-ndwi}
+#| fig-cap: "Figure 5. NDWI per fishnet cell. Positive values (blue) mark surface water and wet soil; negative values (red) mark dry land and vegetation. The Bow and Elbow corridors score highly positive, consistent with the 2013 inundation extent."
+
+p_ndwi <- ggplot() +
+  geom_sf(data = calgary_fishnet, aes(fill = ndwi), color = "transparent") +
+  scale_fill_gradient2(
+    low = "#d7191c", mid = "#ffffbf", high = "#2471a3",
+    midpoint = 0, name = "NDWI"
+  ) +
+  labs(
+    title    = "NDWI — Calgary Fishnet",
+    subtitle = "Blue = water/wet; red = dry land/vegetation | Sentinel-2 Band 3 & Band 8"
+  ) +
+  theme_flood()
+
+p_ndwi
+ggsave("figures/fig5_ndwi.png", p_ndwi, width = 9, height = 6, dpi = 300)
+```
+
+## 2.2 Feature summary
+
+```{r eda-barplot}
+#| fig-cap: "Figure 6. Mean feature values by flood status. All six model features separate flooded from non-flooded cells in the expected physical direction."
+
+cal_long <- as.data.frame(calgary_fishnet) |>
+  dplyr::select(flood, elevation, twi, dist_river, ndwi, lu_class, drain_dens) |>
+  pivot_longer(cols = -flood, names_to = "variable", values_to = "value") |>
+  group_by(flood, variable) |>
+  summarise(mean_val = mean(value, na.rm = TRUE), .groups = "drop") |>
+  mutate(
+    flood    = factor(flood, labels = c("Not flooded", "Flooded")),
+    variable = dplyr::recode(variable,
+      elevation  = "Elevation (percentile)",
+      twi        = "TWI",
+      dist_river = "Dist. to stream (m)",
+      ndwi       = "NDWI",
+      lu_class   = "Land use class",
+      drain_dens = "Drainage density"
+    )
+  )
+
+ggplot(cal_long, aes(x = flood, y = mean_val, fill = flood)) +
+  geom_col(width = 0.55, show.legend = FALSE) +
+  facet_wrap(~variable, scales = "free_y", ncol = 3) +
+  scale_fill_manual(values = c("#dfe6e9", "#2471a3")) +
+  labs(x = NULL, y = "Mean value",
+       title = "Feature Means by Flood Status — Calgary") +
+  theme_bw(base_size = 11) +
+  theme(strip.background = element_blank(), strip.text = element_text(face = "bold"))
+```
+
+## 2.3 Feature patchwork
+
+
+
+```{r patchwork-features}
+#| fig-cap: "Figure X. Six model features by fishnet cell — Calgary. All features are in physically interpretable directions relative to flood risk."
+#| fig-width: 14
+#| fig-height: 9
+
+library(patchwork)
+
+flooded_cells <- calgary_fishnet[calgary_fishnet$flood == 1, ]
+
+p1 <- ggplot() +
+  geom_sf(data = calgary_fishnet, aes(fill = elevation), color = "transparent") +
+  geom_sf(data = flooded_cells, fill = "transparent", color = "#2471a3", linewidth = 0.08) +
+  scale_fill_viridis_c(option = "magma", direction = -1,
+                       name = "Percentile",
+                       labels = function(x) paste0(x, "th")) +
+  labs(title = "Elevation Percentile",
+       subtitle = "Lower = higher flood risk") +
+  theme_flood()
+
+p2 <- ggplot() +
+  geom_sf(data = calgary_fishnet, aes(fill = twi), color = "transparent") +
+  scale_fill_viridis_c(option = "mako", name = "TWI") +
+  labs(title = "Topographic Wetness Index",
+       subtitle = "Higher = flatter, more upstream drainage") +
+  theme_flood()
+
+p3 <- ggplot() +
+  geom_sf(data = calgary_fishnet, aes(fill = dist_river), color = "transparent") +
+  scale_fill_viridis_c(option = "rocket", direction = -1,
+                       name = "Dist. (m)", labels = comma) +
+  labs(title = "Distance to Stream",
+       subtitle = "Closer = higher flood risk") +
+  theme_flood()
+
+p4 <- ggplot() +
+  geom_sf(data = calgary_fishnet, aes(fill = ndwi), color = "transparent") +
+  scale_fill_gradient2(low = "#d7191c", mid = "#ffffbf", high = "#2471a3",
+                       midpoint = 0, name = "NDWI") +
+  labs(title = "NDWI",
+       subtitle = "Positive = surface water / wet soil") +
+  theme_flood()
+
+p5 <- ggplot() +
+  geom_sf(data = calgary_fishnet, aes(fill = as.factor(lu_class)), color = "transparent") +
+  scale_fill_manual(values = c("2" = "#d4a76a", "3" = "#74c476"),
+                    labels = c("2" = "Urban/developed", "3" = "Open/vegetated"),
+                    name = "Land use") +
+  labs(title = "Land Use Class",
+       subtitle = "Open/vegetated = higher flood risk") +
+  theme_flood()
+
+p6 <- ggplot() +
+  geom_sf(data = calgary_fishnet, aes(fill = drain_dens), color = "transparent") +
+  scale_fill_viridis_c(option = "mako", direction = 1, name = "km/km²") +
+  labs(title = "Drainage Density",
+       subtitle = "Higher = more channel network nearby") +
+  theme_flood()
+
+(p1 | p2 | p3) / (p4 | p5 | p6) +
+  plot_annotation(
+    title    = "Model Features — Calgary Fishnet (60 m cells)",
+    subtitle = "All six predictors significant at p < 0.001; directions consistent with expected flood physics",
+    theme    = theme(
+      plot.title    = element_text(size = 15, face = "bold", family = "sans"),
+      plot.subtitle = element_text(size = 11, color = "grey40", family = "sans")
+    )
+  )
+
+ggsave("figures/patchwork_features.png",
+       width = 14, height = 9, dpi = 300)
+```
+
+
+
+
+---
+
+# 3. Model
+
+## 3.1 Train / test split
+
+```{r train-test-split}
+model_data_cal <- as.data.frame(calgary_fishnet) |>
+  dplyr::select(uniqueID, flood, elevation, twi, dist_river, ndwi,
+                lu_class, drain_dens, CN) |>
+  drop_na() |>
+  mutate(lu_class = as.factor(lu_class))
+
+set.seed(3456)
+train_idx <- createDataPartition(model_data_cal$flood, p = 0.70, list = FALSE)
+cal_train <- model_data_cal[train_idx, ]
+cal_test  <- model_data_cal[-train_idx, ]
+
+cat(sprintf(
+  "Training: %d cells | %d flooded (%.1f%%)\nTest:     %d cells | %d flooded (%.1f%%)\n",
+  nrow(cal_train), sum(cal_train$flood), mean(cal_train$flood) * 100,
+  nrow(cal_test),  sum(cal_test$flood),  mean(cal_test$flood)  * 100
+))
+```
+
+## 3.2 Logistic regression
+
+```{r fit-model}
+#| output: false
+
+flood_model <- glm(
+  flood ~ elevation + twi + dist_river + ndwi + lu_class + drain_dens,
+  family = binomial(link = "logit"),
+  data   = cal_train
+)
+```
+
+```{r model-coef-table}
+model_tbl <- tidy(flood_model, conf.int = TRUE) |>
+  mutate(
+    OR  = round(exp(estimate), 4),
+    sig = case_when(
+      p.value < 0.001 ~ "***",
+      p.value < 0.01  ~ "**",
+      p.value < 0.05  ~ "*",
+      TRUE            ~ ""
+    )
+  ) |>
+  dplyr::select(term, estimate, std.error, OR, p.value, sig) |>
+  mutate(across(where(is.numeric), \(x) round(x, 4)))
+
+kable(
+  model_tbl,
+  col.names = c("Term", "Log-Odds", "Std. Error", "Odds Ratio", "p-value", ""),
+  caption   = "Table 1. Logistic regression model — Calgary flood inundation"
+) |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE)
+```
+
+## 3.3 Model performance
+
+```{r roc-auc}
+#| fig-cap: "Figure 7. ROC curve (test set). AUC = 0.913 indicates strong discriminative ability — the model correctly ranks a randomly drawn flooded cell above a non-flooded cell 91% of the time."
+
+threshold <- 0.10
+
+test_probs <- data.frame(
+  uniqueID = cal_test$uniqueID,
+  obs      = cal_test$flood,
+  pred     = predict(flood_model, cal_test, type = "response")
+) |>
+  mutate(pred_class = ifelse(pred >= threshold, 1, 0))
+
+auc_val <- auc(test_probs$obs, test_probs$pred)
+
+p_roc <- ggplot(test_probs, aes(d = obs, m = pred)) +
+  geom_roc(n.cuts = 50, labels = FALSE, color = "#2471a3") +
+  geom_abline(slope = 1, intercept = 0, color = "grey50", linewidth = 1) +
+  style_roc(theme = theme_bw) +
+  labs(
+    title    = "ROC Curve — Calgary Flood Model (test set)",
+    subtitle = paste0("AUC = ", round(auc_val, 3))
+  ) +
+  theme_bw(base_size = 11)
+
+p_roc
+ggsave("figures/fig7_roc.png", p_roc, width = 9, height = 6, dpi = 300)
+
+cat(sprintf("AUC: %.4f | McFadden pseudo-R2: %.4f\n",
+    round(auc_val, 4),
+    round(pR2(flood_model)["McFadden"], 4)))
+```
+
+```{r confusion-matrix}
+cm <- caret::confusionMatrix(
+  reference = as.factor(test_probs$obs),
+  data      = as.factor(test_probs$pred_class),
+  positive  = "1"
+)
+
+# Compact metrics table
+data.frame(
+  Metric = c("Accuracy", "Sensitivity (Recall)", "Specificity",
+             "Pos. Predictive Value", "Neg. Predictive Value",
+             "Balanced Accuracy", "Kappa"),
+  Value  = round(c(cm$overall["Accuracy"], cm$byClass["Sensitivity"],
+                   cm$byClass["Specificity"], cm$byClass["Pos Pred Value"],
+                   cm$byClass["Neg Pred Value"], cm$byClass["Balanced Accuracy"],
+                   cm$overall["Kappa"]), 4)
+) |>
+  kable(caption = "Table 2. Test set performance metrics (threshold = 0.10)") |>
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+```{r confusion-interpretation}
+conf_tbl <- data.frame(
+  Outcome        = c("True Positive", "True Negative",
+                     "False Positive", "False Negative"),
+  Predicted      = c("Flooded", "Not flooded", "Flooded", "Not flooded"),
+  Observed       = c("Flooded", "Not flooded", "Not flooded", "Flooded"),
+  Count          = c(cm$table[2,2], cm$table[1,1], cm$table[2,1], cm$table[1,2]),
+  Interpretation = c(
+    "Correctly flagged as flood-prone. Priority target for infrastructure protection.",
+    "Correctly cleared. No resources wasted here.",
+    "Over-predicted as flood-prone. May trigger unneeded mitigation investment.",
+    "A missed flood zone. The most dangerous error type for public safety."
+  )
+)
+
+kable(conf_tbl,
+      caption = "Table 3. Plain-language confusion matrix outcomes") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) |>
+  column_spec(1, bold = TRUE) |>
+  row_spec(4, background = "#fff3cd")
+```
+
+---
+
+# 4. Spatial Predictions
+
+## 4.1 Generate predictions
+
+```{r predict-all-calgary}
+#| output: false
+
+all_preds_cal <- predict(flood_model, model_data_cal, type = "response")
+
+pred_df <- model_data_cal |>
+  mutate(
+    pred_prob   = all_preds_cal,
+    pred_class  = ifelse(all_preds_cal >= threshold, 1, 0),
+    conf_result = case_when(
+      pred_class == 1 & flood == 1 ~ "True Positive",
+      pred_class == 0 & flood == 0 ~ "True Negative",
+      pred_class == 1 & flood == 0 ~ "False Positive",
+      pred_class == 0 & flood == 1 ~ "False Negative"
+    )
+  )
+
+calgary_preds <- merge(
+  calgary_fishnet,
+  dplyr::select(pred_df, uniqueID, pred_prob, pred_class, conf_result),
+  by = "uniqueID", all.x = TRUE
+)
+
+# Training-set confusion — required for Map 1
+train_conf <- pred_df |>
+  filter(uniqueID %in% cal_train$uniqueID)
+
+calgary_train_preds <- merge(
+  calgary_fishnet,
+  dplyr::select(train_conf, uniqueID, pred_prob, pred_class, conf_result),
+  by = "uniqueID"
+)
+```
+
+## 4.2 Map 1: Training set confusion outcomes
+
+```{r map-confusion-train}
+#| fig-cap: "Figure 8. Spatial confusion outcomes — Calgary training set (70% of cells, threshold = 0.10). True positives and negatives dominate the river corridor and upland areas respectively. False negatives are scattered rather than clustered, suggesting the feature set captures the primary flood drivers without a systematic spatial gap."
+
+p_conf_train <- ggplot() +
+  geom_sf(data = calgary_train_preds,
+          aes(fill = conf_result), color = "transparent") +
+  scale_fill_manual(values = pal_conf, name = "Outcome",
+                    na.value = "grey90") +
+  labs(
+    title    = "Confusion Outcomes — Calgary Training Set (0.10 threshold)",
+    subtitle = "70% stratified sample | n = 137,789 cells"
+  ) +
+  theme_flood()
+
+p_conf_train
+ggsave("figures/fig8_confusion_train.png", p_conf_train,
+       width = 9, height = 6, dpi = 300)
+```
+
+## 4.3 Map 2: Predicted flood probability — Calgary (full dataset)
+
+```{r map-calgary-full}
+#| fig-cap: "Figure 9. Predicted flood inundation probability — all Calgary cells (quintile colour breaks). The highest-risk quintile traces the Bow and Elbow river valleys, consistent with the 2013 observed inundation extent."
+
+p_cal_prob <- ggplot() +
+  geom_sf(
+    data  = calgary_preds,
+    aes(fill = factor(ntile(pred_prob, 5))),
+    color = "transparent"
+  ) +
+  scale_fill_manual(
+    values = pal_flood,
+    labels = paste0(
+      round(quantile(calgary_preds$pred_prob,
+                     c(0.0, 0.2, 0.4, 0.6, 0.8), na.rm = TRUE) * 100, 1), "%"
+    ),
+    name = "Predicted\nprobability\n(quintiles)"
+  ) +
+  labs(
+    title    = "Predicted Flood Inundation Probability — Calgary",
+    subtitle = "GLM logistic regression trained on 2013 flood satellite extent"
+  ) +
+  theme_flood()
+
+p_cal_prob
+ggsave("figures/fig9_calgary_prob.png", p_cal_prob,
+       width = 9, height = 6, dpi = 300)
+```
+
+---
+
+# 5. Minneapolis Deployment
+
+```{r mpls-load}
+#| output: false
+
+mpls_boundary <- st_read("data/minneapolis/city_boundary/City_Boundary.shp",
+                         quiet = TRUE)
+mpls_boundary <- st_transform(mpls_boundary, crs = 32615)
+
+dem_mpls_raw        <- rast("data/minneapolis/DEM.TIF")
+mpls_boundary_nad83 <- st_transform(mpls_boundary, crs = crs(dem_mpls_raw))
+dem_mpls <- crop(dem_mpls_raw, vect(mpls_boundary_nad83))
+dem_mpls <- mask(dem_mpls, vect(mpls_boundary_nad83))
+dem_mpls <- project(dem_mpls, "EPSG:32615", method = "bilinear")
+
+water_sf     <- st_make_valid(st_transform(
+  st_read("data/minneapolis/water/Water.shp", quiet = TRUE),
+  crs = 32615))
+mpls_streams <- filter(water_sf, TYPE_ %in% c("River", "Creek"))
+mpls_lakes   <- filter(water_sf, TYPE_ %in% c("Lake", "Pond"))
+
+mpls_fishnet <- st_make_grid(mpls_boundary, cellsize = cell_size, square = TRUE)
+mpls_fishnet <- st_sf(mpls_fishnet)
+mpls_fishnet$uniqueID <- seq_len(nrow(mpls_fishnet))
+mpls_fishnet <- st_filter(mpls_fishnet, mpls_boundary)
+mpls_vect    <- vect(mpls_fishnet)
+```
+
+```{r mpls-features}
+#| output: false
+
+# Elevation percentile
+elev_zonal_m <- terra::extract(dem_mpls, mpls_vect, fun = mean, na.rm = TRUE)
+mpls_fishnet$elev_raw  <- elev_zonal_m[[2]]
+mpls_fishnet$elevation <- rank(mpls_fishnet$elev_raw, ties.method = "average",
+                               na.last = "keep") /
+                          sum(!is.na(mpls_fishnet$elev_raw)) * 100
+
+# Whitebox pipeline
+dir.create("data/minneapolis/hydro_scratch", showWarnings = FALSE, recursive = TRUE)
+writeRaster(dem_mpls, "data/minneapolis/hydro_scratch/dem_utm.tif", overwrite = TRUE)
+wbt_fill_depressions_wang_and_liu(
+  dem    = "data/minneapolis/hydro_scratch/dem_utm.tif",
+  output = "data/minneapolis/hydro_scratch/dem_filled.tif"
+)
+wbt_d8_flow_accumulation(
+  input    = "data/minneapolis/hydro_scratch/dem_filled.tif",
+  output   = "data/minneapolis/hydro_scratch/flow_acc.tif",
+  out_type = "cells"
+)
+
+flow_acc_mpls   <- rast("data/minneapolis/hydro_scratch/flow_acc.tif")
+dem_filled_mpls <- rast("data/minneapolis/hydro_scratch/dem_filled.tif")
+
+slope_rad_mpls <- terrain(dem_filled_mpls, v = "slope", unit = "radians")
+slope_tan_mpls <- ifel(tan(slope_rad_mpls) < 0.001, 0.001, tan(slope_rad_mpls))
+twi_rast_mpls  <- log(flow_acc_mpls / slope_tan_mpls)
+
+twi_zonal_m      <- terra::extract(twi_rast_mpls, mpls_vect, fun = mean, na.rm = TRUE)
+mpls_fishnet$twi <- twi_zonal_m[[2]]
+
+mpls_fishnet$dist_river <- nn_distance(mpls_fishnet, mpls_streams)
+
+B03_mpls      <- rast("data/minneapolis/sentinel2_B03.tiff") / 10000
+B08_mpls      <- rast("data/minneapolis/sentinel2_B08.tiff") / 10000
+ndwi_mpls     <- project((B03_mpls - B08_mpls) / (B03_mpls + B08_mpls),
+                          "EPSG:32615", method = "bilinear")
+ndwi_zonal_m  <- terra::extract(ndwi_mpls, mpls_vect, fun = mean, na.rm = TRUE)
+mpls_fishnet$ndwi <- ndwi_zonal_m[[2]]
+
+# Land use
+lu_mpls_raw <- st_read(
+  "data/minneapolis/land_use/Future_Land_Use_and_Built_Form_2040.shp",
+  quiet = TRUE)
+lu_mpls <- st_transform(lu_mpls_raw, crs = 32615)
+lu_mpls$lu_class <- case_when(
+  lu_mpls$Land_Use %in% c(
+    "Urban Neighborhood", "Corridor Mixed Use", "Community Mixed Use",
+    "Neighborhood Mixed Use", "Destination Mixed Use", "Production Mixed Use",
+    "Production and Processing", "Neighborhood Office and Services",
+    "Public, Office, and Institutional", "Transportation"
+  ) ~ 2L,
+  lu_mpls$Land_Use == "Parks and Open Space" ~ 3L,
+  TRUE ~ 2L
+)
+
+mpls_centroids <- st_centroid(mpls_fishnet)
+lu_join_m <- st_join(mpls_centroids, dplyr::select(lu_mpls, lu_class), join = st_within)
+lu_modal_m <- lu_join_m |>
+  as.data.frame() |>
+  group_by(uniqueID) |>
+  summarise(lu_class = ifelse(any(lu_class == 2L, na.rm = TRUE), 2L, 3L),
+            .groups = "drop")
+
+mpls_fishnet <- merge(mpls_fishnet, lu_modal_m, by = "uniqueID", all.x = TRUE)
+mpls_fishnet$lu_class[is.na(mpls_fishnet$lu_class)] <- 2L
+mpls_fishnet$lu_class <- as.factor(mpls_fishnet$lu_class)
+
+# Drainage density
+cell_area_m2_m    <- prod(res(flow_acc_mpls))
+threshold_cells_m <- (25 * 1e6) / cell_area_m2_m
+stream_binary_m   <- ifel(flow_acc_mpls >= threshold_cells_m, 1, 0)
+w_m               <- matrix(1, nrow = 11, ncol = 11)
+stream_sum_m      <- focal(stream_binary_m, w = w_m, fun = "sum", na.rm = TRUE)
+window_area_km2_m <- (11 * res(flow_acc_mpls)[1])^2 / 1e6
+drain_dens_mpls   <- (stream_sum_m * res(flow_acc_mpls)[1]) / (window_area_km2_m * 1000)
+dd_zonal_m        <- terra::extract(drain_dens_mpls, mpls_vect, fun = mean, na.rm = TRUE)
+mpls_fishnet$drain_dens <- dd_zonal_m[[2]]
+```
+
+```{r mpls-predict}
+
+model_data_mpls <- as.data.frame(mpls_fishnet) |>
+  dplyr::select(uniqueID, elevation, twi, dist_river, ndwi, lu_class, drain_dens) |>
+  drop_na() |>
+  mutate(lu_class = as.factor(lu_class))
+
+# Feature range check
+cat("=== Feature range check (Minneapolis vs Calgary training) ===\n")
+for (v in c("elevation", "twi", "dist_river", "ndwi", "drain_dens")) {
+  mpls_range <- range(model_data_mpls[[v]], na.rm = TRUE)
+  cal_range  <- range(cal_train[[v]], na.rm = TRUE)
+  status     <- ifelse(
+    mpls_range[1] >= cal_range[1] & mpls_range[2] <= cal_range[2],
+    "PASS", "extrapolation risk"
+  )
+  cat(sprintf("  %-12s Cal [%.2f, %.2f]  Mpls [%.2f, %.2f]  %s\n",
+              v, cal_range[1], cal_range[2],
+              mpls_range[1], mpls_range[2], status))
+}
+
+model_data_mpls <- model_data_mpls |>
+  mutate(
+    pred_prob  = predict(flood_model, model_data_mpls, type = "response"),
+    pred_class = ifelse(pred_prob >= threshold, 1, 0)
+  )
+
+mpls_preds <- merge(
+  mpls_fishnet,
+  dplyr::select(model_data_mpls, uniqueID, pred_prob, pred_class),
+  by = "uniqueID", all.x = TRUE
+)
+
+cat(sprintf("\nCells flagged flood-prone: %d (%.1f%% of city)\n",
+    sum(model_data_mpls$pred_class, na.rm = TRUE),
+    mean(model_data_mpls$pred_class, na.rm = TRUE) * 100))
+```
+
+## 5.1 Map 3: Flood risk classification — Minneapolis
+
+```{r map-mpls-binary}
+#| fig-cap: "Figure 10. Binary flood risk classification — Minneapolis (threshold = 0.10). Purple cells (6.2% of city) are flagged as flood-prone. High-risk cells align tightly with the Mississippi River gorge on the western edge and the Minnesota River confluence to the south, consistent with known flood hazard zones."
+
+p_mpls <- ggplot() +
+  geom_sf(data = mpls_preds, aes(fill = as.factor(pred_class)),
+          color = "transparent") +
+  scale_fill_manual(
+    values = c("0" = "#dfe6e9", "1" = "#810f7c"),
+    labels = c("Not flood-prone", "Flood-prone (p ≥ 0.10)"),
+    name   = "", na.value = "grey80"
+  ) +
+  geom_sf(data = mpls_streams, color = "#2471a3", linewidth = 0.4, alpha = 0.8) +
+  geom_sf(data = mpls_lakes,   fill = "#aed6f1", color = "transparent", alpha = 0.6) +
+  geom_sf(data = mpls_boundary, fill = "transparent",
+          color = "grey30", linewidth = 0.4) +
+  labs(
+    title    = "Flood Risk Classification — Minneapolis",
+    subtitle = "Calgary-trained GLM | Purple = flood-prone (p ≥ 0.10) | Blue = streams and lakes"
+  ) +
+  theme_flood()
+
+p_mpls
+ggsave("figures/fig10_minneapolis_binary.png", p_mpls,
+       width = 9, height = 6, dpi = 300)
+```
+
+# 6 Composite Map
+
+```{r patchwork-maps}
+#| fig-cap: "Figure X. Left: confusion outcomes on the Calgary training set (threshold = 0.10). Center: predicted flood inundation probability across all Calgary cells. Right: binary flood risk classification for Minneapolis using the Calgary-trained model."
+#| fig-width: 18
+#| fig-height: 8
+
+library(patchwork)
+
+# ── Map 1: Training set confusion outcomes ────────────────────────────────────
+m1 <- ggplot() +
+  geom_sf(data = calgary_train_preds,
+          aes(fill = conf_result), color = "transparent") +
+  scale_fill_manual(
+    values = pal_conf,
+    name   = "Outcome",
+    na.value = "grey90"
+  ) +
+  labs(
+    title    = "Calgary: Training Set Errors",
+    subtitle = "70% stratified sample | threshold = 0.10"
+  ) +
+  theme_flood()
+
+# ── Map 2: Full Calgary predicted probability ─────────────────────────────────
+m2 <- ggplot() +
+  geom_sf(
+    data  = calgary_preds,
+    aes(fill = factor(ntile(pred_prob, 5))),
+    color = "transparent"
+  ) +
+  scale_fill_manual(
+    values = pal_flood,
+    labels = paste0(
+      round(quantile(calgary_preds$pred_prob,
+                     c(0.0, 0.2, 0.4, 0.6, 0.8),
+                     na.rm = TRUE) * 100, 1), "%"
+    ),
+    name = "Predicted\nprobability\n(quintiles)",
+    na.value = "grey90"
+  ) +
+  labs(
+    title    = "Calgary: Predicted Flood Probability",
+    subtitle = "All cells | GLM trained on 2013 satellite extent"
+  ) +
+  theme_flood()
+
+# ── Map 3: Minneapolis binary classification ──────────────────────────────────
+m3 <- ggplot() +
+  geom_sf(data = mpls_preds,
+          aes(fill = as.factor(pred_class)),
+          color = "transparent") +
+  scale_fill_manual(
+    values = c("0" = "#dfe6e9", "1" = "#810f7c"),
+    labels = c("Not flood-prone", "Flood-prone (p \u2265 0.10)"),
+    name   = "",
+    na.value = "grey80"
+  ) +
+  geom_sf(data = mpls_streams, color = "#2471a3",
+          linewidth = 0.3, alpha = 0.8) +
+  geom_sf(data = mpls_lakes, fill = "#aed6f1",
+          color = "transparent", alpha = 0.6) +
+  geom_sf(data = mpls_boundary, fill = "transparent",
+          color = "grey30", linewidth = 0.4) +
+  labs(
+    title    = "Minneapolis: Flood Risk Classification",
+    subtitle = "Calgary-trained GLM | threshold = 0.10"
+  ) +
+  theme_flood()
+
+# ── Patchwork ─────────────────────────────────────────────────────────────────
+p_maps <- m1 | m2 | m3
+
+p_maps
+
+ggsave("figures/patchwork_maps.png", plot = p_maps,
+       width = 18, height = 8, dpi = 300)
+```
+
+---
+
+# Appendix: Session information
+
+```{r session-info}
+#| code-fold: false
+sessionInfo()
+```
