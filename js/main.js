@@ -11,9 +11,9 @@
   const navToggle = document.getElementById('navToggle');
   const navMenu   = document.getElementById('navMenu');
 
-  // Add background when scrolled past the fold
+  // Shrink nav after scrolling past ~100px
   window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 60);
+    nav.classList.toggle('scrolled', window.scrollY > 100);
   }, { passive: true });
 
   // Mobile hamburger toggle

@@ -181,7 +181,7 @@ ul { list-style: none; }
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  transition: background var(--transition), box-shadow var(--transition);
+  transition: background .35s ease, box-shadow .35s ease;
 }
 
 .nav.scrolled {
@@ -193,15 +193,24 @@ ul { list-style: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 68px;
+  height: 88px;
+  transition: height .35s ease, padding .35s ease;
+}
+
+.nav.scrolled .nav__inner {
+  height: 60px;
 }
 
 .nav__brand {
   font-family: var(--font-heading);
-  font-size: 1.5rem;
+  font-size: 1.85rem;
   font-weight: 700;
   color: var(--white);
   letter-spacing: -.02em;
+  transition: font-size .35s ease, color .25s ease;
+}
+.nav.scrolled .nav__brand {
+  font-size: 1.3rem;
 }
 .nav__brand:hover { color: var(--teal); }
 
