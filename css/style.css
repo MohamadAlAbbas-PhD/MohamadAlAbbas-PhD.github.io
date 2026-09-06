@@ -782,6 +782,139 @@ ul { list-style: none; }
   margin-top: auto;
 }
 
+.card-note {
+  font-size: .74rem;
+  font-style: italic;
+  color: var(--text-light);
+  margin-bottom: .7rem;
+}
+
+/* === DISSERTATION === */
+.diss__intro {
+  max-width: 760px;
+  margin-bottom: 2.5rem;
+}
+.diss__intro p {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+.diss__intro p:first-child {
+  font-size: 1.08rem;
+  color: var(--text);
+  line-height: 1.75;
+}
+
+.diss__questions {
+  list-style: none;
+  counter-reset: dq;
+  margin-top: 1.6rem;
+  border-left: 2px solid var(--accent);
+  padding-left: 1.25rem;
+}
+.diss__questions li {
+  counter-increment: dq;
+  position: relative;
+  font-size: .9rem;
+  color: var(--text-muted);
+  margin-bottom: .8rem;
+  line-height: 1.6;
+}
+.diss__questions li:last-child { margin-bottom: 0; }
+.diss__questions li::before {
+  content: counter(dq);
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--accent-dark);
+  margin-right: .5rem;
+}
+
+.diss__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.diss-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1.6rem;
+  box-shadow: var(--shadow);
+  transition: all var(--transition);
+  display: flex; flex-direction: column;
+}
+.diss-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.diss-card__num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  margin-bottom: .5rem;
+}
+.diss-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  color: var(--ink);
+  margin-bottom: .7rem;
+}
+.diss-card p {
+  font-size: .85rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 1rem;
+  flex: 1;
+}
+
+.diss__footnote {
+  margin-top: 2rem;
+  font-size: .82rem;
+  color: var(--text-light);
+}
+
+/* Sidebar dissertation box */
+.about__diss-box {
+  background: var(--ink);
+  border-radius: var(--radius);
+  padding: 1.3rem;
+  margin-bottom: 1.5rem;
+}
+.about__diss-box h3 {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  margin-bottom: .6rem;
+}
+.about__diss-box p {
+  font-family: var(--font-heading);
+  font-size: .95rem;
+  line-height: 1.4;
+  color: var(--white);
+  margin-bottom: .6rem;
+}
+.about__diss-box span {
+  display: block;
+  font-size: .78rem;
+  line-height: 1.55;
+  color: rgba(255,255,255,.6);
+  margin-bottom: .9rem;
+}
+.about__diss-box a {
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--accent-light);
+}
+.about__diss-box a:hover { color: var(--white); }
+
 /* Status badges */
 .badge {
   display: inline-block;
