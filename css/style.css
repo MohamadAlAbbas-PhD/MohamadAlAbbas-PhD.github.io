@@ -849,15 +849,20 @@ ul { list-style: none; }
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
 }
+.diss-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+  margin-bottom: .55rem;
+}
 .diss-card__num {
-  display: block;
   font-family: var(--font-mono);
   font-size: .68rem;
   font-weight: 600;
   letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--accent-dark);
-  margin-bottom: .5rem;
 }
 .diss-card h3 {
   font-family: var(--font-heading);
